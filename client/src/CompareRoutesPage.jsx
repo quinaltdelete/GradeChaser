@@ -25,7 +25,7 @@ function CompareRoutesPage({ refetchRoutes }) {
     async function fetchAllRoutes() {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`${API_BASE_URL}/api/routes`, {
+        const response = await fetch(`/api/routes`, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -159,7 +159,7 @@ function CompareRoutesPage({ refetchRoutes }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/add-comparison`, {
+      const response = await fetch(`/api/add-comparison`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -185,7 +185,7 @@ function CompareRoutesPage({ refetchRoutes }) {
         });
 
         // Optionally recalculate ranks
-        await fetch(`${API_BASE_URL}/api/recalculate-ranks`, {
+        await fetch(`/api/recalculate-ranks`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -236,7 +236,7 @@ function CompareRoutesPage({ refetchRoutes }) {
   const handleBackToHome = async () => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`${API_BASE_URL}/api/recalculate-ranks`, {
+      await fetch(`/api/recalculate-ranks`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` }
       });

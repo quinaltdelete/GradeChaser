@@ -12,7 +12,7 @@ function RoutePage({ user }) {
   // Fetch route details and comparisons for the active user.
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch(`${API_BASE_URL}/api/route/${id}`, {
+    fetch(`/api/route/${id}`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`  // Ensure token is sent.
@@ -29,7 +29,7 @@ function RoutePage({ user }) {
   // Delete comparison
   const deleteComparison = async (comparisonId) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(`${API_BASE_URL}/api/delete-comparison/${comparisonId}`, {
+    const response = await fetch(`/api/delete-comparison/${comparisonId}`, {
       method: "DELETE",
       headers: { "Authorization": `Bearer ${token}` }
     });

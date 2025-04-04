@@ -26,7 +26,7 @@ function AddRoutePage({ setPage }) {
   const [savedComparisons, setSavedComparisons] = useState([]); // Store saved comparisons
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/routes`)
+    fetch(`/api/routes`)
       .then(response => response.json())
       .then(data => {
         setAllRoutes(data);
@@ -129,7 +129,7 @@ function AddRoutePage({ setPage }) {
   const handleSaveRoute = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${API_BASE_URL}/api/add-route`, {
+      const response = await fetch(`/api/add-route`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +179,7 @@ function AddRoutePage({ setPage }) {
   
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/add-comparison`, {
+      const response = await fetch(`/api/add-comparison`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -355,7 +355,7 @@ function AddRoutePage({ setPage }) {
           <button onClick={async () => {
             try {
               // Trigger rank recalculation.
-              await fetch(`${API_BASE_URL}/api/recalculate-ranks`, { method: "POST" });
+              await fetch(`/api/recalculate-ranks`, { method: "POST" });
             } catch (error) {
               console.error("Error recalculating grades:", error);
             } finally {

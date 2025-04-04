@@ -5,13 +5,17 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const { exec } = require("child_process");
 const jwt = require('jsonwebtoken');
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "..", "dist")));
+
+const PORT = process.env.PORT || 5001;
 
 // Mount the auth routes.
-app.use(authRoutes);
+app.use('/api', authRoutes);
 
 // PostgreSQL Connection
 const pool = new Pool({
@@ -338,7 +342,11 @@ app.post("/api/recalculate-ranks", async (req, res) => {
   }
 });
 
+// Catch-all route for React Router
+app.get("*", (req, res) => {
+  const indexPath = path.join(__dirname, "..", "dist", "index.html");
+  console.log("Sending index.html from:", indexPath);
+  res.sendFile(indexPath);
+});
 
-// Start Server.
-const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -19,7 +19,7 @@ const pool = new Pool({
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
 // Signup endpoint.
-router.post('/api/signup', async (req, res) => {
+router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -48,7 +48,7 @@ router.post('/api/signup', async (req, res) => {
 });
 
 // Login endpoint.
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -87,7 +87,7 @@ function authenticateToken(req, res, next) {
 }
 
 // Change Password Endpoint.
-router.post('/api/change-password', authenticateToken, async (req, res) => {
+router.post('/change-password', authenticateToken, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const userId = req.user.id; // Obtained from the verified token.
   
@@ -124,7 +124,7 @@ router.post('/api/change-password', authenticateToken, async (req, res) => {
 });
 
 // Delete Account Endpoint.
-router.delete('/api/delete-account', authenticateToken, async (req, res) => {
+router.delete('/delete-account', authenticateToken, async (req, res) => {
   const userId = req.user.id; // Retrieved from the verified token.
   try {
     // Delete the user from the database.

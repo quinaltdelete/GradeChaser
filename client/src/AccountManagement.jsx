@@ -18,7 +18,7 @@ function AccountManagement({ user, setUser }) {
     }
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/change-password`, {
+      const response = await fetch(`/api/change-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +47,7 @@ function AccountManagement({ user, setUser }) {
     }
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/delete-account`, {
+      const response = await fetch(`/api/delete-account`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });

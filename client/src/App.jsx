@@ -18,7 +18,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   const refetchRoutes = () => {
-    return fetch(`${API_BASE_URL}/api/routes`)
+    return fetch(`/api/routes`)
     .then(res => res.json())
     .then(data => setRoutes(data))
     .catch(err => console.error("Error fetching routes:", err));
@@ -29,7 +29,7 @@ function App() {
     const token = localStorage.getItem("token");
     if (token) {
       // Fetch the user from the server:
-      fetch(`${API_BASE_URL}/api/me`, {
+      fetch(`/api/me`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`

@@ -45,7 +45,7 @@ function RankingDisplay({ routes }) {
     if (rankingType === "personal") {
       const token = localStorage.getItem("token");
       if (token) {
-        fetch(`${API_BASE_URL}/api/personal-ranking-bayesian`, {
+        fetch(`/api/personal-ranking-bayesian`, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
