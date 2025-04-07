@@ -1,41 +1,42 @@
-import 'dotenv/config';
-import fs from 'fs';
-import pkg from 'pg';
-const { Pool } = pkg;
+// insert-climbs.js
+require('dotenv').config();
+const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
 
-// Set up database connection
-const pool = new Pool();
+// Connect using DATABASE_URL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-// Load \cleaned climbs data
-const climbs = JSON.parse(fs.readFileSync('cleaned-buttermilk-climbs.json', 'utf-8'));
+async function main() {
+  try {
+    const filePath = path.join(__dirname, 'cleaned-buttermilk-climbs.json');
+    const jsonData = fs.readFileSync(filePath, 'utf-8');
+    const climbs = JSON.parse(jsonData);
 
-// Function to insert climbs into database
-async function insertClimbs() {
-  const queryText = `
-    INSERT INTO routes (name, area, sub_area, country, book_grade)
-    VALUES ($1, $2, $3, $4, $5)
-    ON CONFLICT (name) DO NOTHING
-  `;
+    for (const climb of climbs) {
+      // Pull 'zone' and call it sub_area; pull 'vGrade' and call it book_grade
+      const { name, area, zone: sub_area, vGrade: book_grade } = climb;
+      const country = "USA";
+    
+      await pool.query(
+        `INSERT INTO routes (name, area, sub_area, country, book_grade)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (name) DO NOTHING;`,
+        [name, area, sub_area, country, book_grade]
+      );
+    }    
 
-  for (const climb of climbs) {
-    const values = [
-      climb.name,
-      climb.area,            
-      climb.zone,            
-      "USA",                 // defaulting USA for Bishop
-      climb.vGrade           
-    ];
-
-    try {
-      await pool.query(queryText, values);
-      console.log(`Inserted: ${climb.name}`);
-    } catch (err) {
-      console.error(`Error inserting ${climb.name}:`, err);
-    }
+    console.log('All climbs inserted successfully!');
+  } catch (err) {
+    console.error('Error inserting climbs:', err);
+  } finally {
+    await pool.end();
   }
-
-  await pool.end();
-  console.log('Done!');
 }
 
-insertClimbs();
+main();
