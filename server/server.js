@@ -20,7 +20,7 @@ app.use('/api', authRoutes);
 // PostgreSQL Connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssel: {
+  ssl: {
     rejectUnauthorized: false,
   },
 });
