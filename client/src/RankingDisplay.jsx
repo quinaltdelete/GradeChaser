@@ -12,8 +12,6 @@ function RankingDisplay({ routes }) {
   ? [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank)
   : [];
 
-  console.log("RankingDisplay sees global routes: " + sortedGlobalRoutes);
-
   // Initialize rankingType from localStorage so it persists across navigation.
   const [rankingType, setRankingType] = useState(() => {
     return localStorage.getItem("rankingType") || "global";
@@ -154,10 +152,8 @@ function RankingDisplay({ routes }) {
   }
 
   if (!filters.showUnranked) {
-    // Only keep routes that have at least one comparison
-    // Assuming a route with at least one comparison has certainty_score > 0
-    refinedRoutes = refinedRoutes.filter((route) => (route.certainty_score ?? 0) > 0);
-  }
+    refinedRoutes = refinedRoutes.filter(route => route.num_comparisons > 0);
+  }  
 
   const totalPages = Math.ceil(refinedRoutes.length / itemsPerPage);
   const startIndex = currentPage * itemsPerPage;

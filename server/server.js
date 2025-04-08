@@ -46,19 +46,29 @@ app.get("/api/me", authenticateToken, (req, res) => {
   res.json({ username: req.user.username });
 });
 
-// Get the list of ranked routes.
+// Get the list of ranked routes with number of comparisons.
 app.get('/api/routes', async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
-        id,
-        name,
-        area,
-        sub_area,
-        country,
-        COALESCE(certainty_score, 0) AS certainty_score
-      FROM routes
-      ORDER BY calculated_rank DESC;
+        r.id,
+        r.name,
+        r.area,
+        r.sub_area,
+        r.country,
+        COALESCE(r.certainty_score, 0) AS certainty_score,
+        COALESCE(c.num_comparisons, 0) AS num_comparisons
+      FROM routes r
+      LEFT JOIN (
+        SELECT route_id, COUNT(*) AS num_comparisons
+        FROM (
+          SELECT easier_route_id AS route_id FROM route_relationships
+          UNION ALL
+          SELECT harder_route_id AS route_id FROM route_relationships
+        ) AS combined
+        GROUP BY route_id
+      ) c ON r.id = c.route_id
+      ORDER BY r.calculated_rank DESC;
     `);
     res.json(result.rows);
   } catch (err) {
