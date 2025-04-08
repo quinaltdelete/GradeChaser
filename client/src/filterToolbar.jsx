@@ -2,7 +2,6 @@
 import { useState } from "react";
 
 function FilterToolbar({ routes, onFilterChange }) {
-  console.log("FilterToolbar sees routes:", routes);
   
   // Local state for each filter input.
   const [area, setArea] = useState("");

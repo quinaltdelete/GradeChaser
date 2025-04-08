@@ -12,6 +12,8 @@ function RankingDisplay({ routes }) {
   ? [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank)
   : [];
 
+  console.log("RankingDisplay sees global routes: " + sortedGlobalRoutes);
+
   // Initialize rankingType from localStorage so it persists across navigation.
   const [rankingType, setRankingType] = useState(() => {
     return localStorage.getItem("rankingType") || "global";
