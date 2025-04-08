@@ -4,11 +4,6 @@ import FilterToolbar from "./filterToolbar";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-if (!routes) {
-  console.error("RankingDisplay: routes prop is missing!");
-  return null; // this prevents crash, and clearly tells you where it happened
-}
-
 function RankingDisplay({ routes }) {
   const navigate = useNavigate(); 
 
