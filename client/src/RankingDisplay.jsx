@@ -4,11 +4,15 @@ import FilterToolbar from "./filterToolbar";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
+console.log("RankingDisplay routes:", routes);
+
 function RankingDisplay({ routes }) {
   const navigate = useNavigate(); 
 
   // Global routes sorted by calculated_rank in descending order.
-  const sortedGlobalRoutes = [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank);
+  const sortedGlobalRoutes = Array.isArray(routes)
+  ? [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank)
+  : [];
 
   // Initialize rankingType from localStorage so it persists across navigation.
   const [rankingType, setRankingType] = useState(() => {
