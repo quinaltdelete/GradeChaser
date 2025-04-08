@@ -334,7 +334,7 @@ app.get('/api/personal-ranking-bayesian', authenticateToken, async (req, res) =>
 // Trigger a recalculation of the global rankings.
 app.post("/api/recalculate-ranks", async (req, res) => {
   try {
-    exec("node calculateRanks.js", (error, stdout, stderr) => {
+    exec("node server/calculateRanks.js", (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running calculateRanks.js: ${error.message}`);
         return res.status(500).json({ error: "Failed to recalculate ranks" });
