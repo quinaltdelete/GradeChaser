@@ -49,7 +49,17 @@ app.get("/api/me", authenticateToken, (req, res) => {
 // Get the list of ranked routes.
 app.get('/api/routes', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM routes ORDER BY calculated_rank DESC;');
+    const result = await pool.query(`
+      SELECT
+        id,
+        name,
+        area,
+        sub_area,
+        country,
+        COALESCE(certainty_score, 0) AS certainty_score
+      FROM routes
+      ORDER BY calculated_rank DESC;
+    `);
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching routes:", err);

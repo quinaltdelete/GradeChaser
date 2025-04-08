@@ -152,7 +152,7 @@ function RankingDisplay({ routes }) {
   if (!filters.showUnranked) {
     // Only keep routes that have at least one comparison
     // Assuming a route with at least one comparison has certainty_score > 0
-    refinedRoutes = refinedRoutes.filter((route) => route.certainty_score > 0);
+    refinedRoutes = refinedRoutes.filter((route) => (route.certainty_score ?? 0) > 0);
   }
 
   const totalPages = Math.ceil(refinedRoutes.length / itemsPerPage);
