@@ -55,6 +55,7 @@ function RankingDisplay({ routes }) {
         })
           .then((response) => response.json())
           .then((data) => {
+            console.log("Fetched personal routes: ", data);
             setPersonalRoutes(Array.isArray(data) ? data : []);
           })
           .catch((error) => console.error("Error fetching personal rankings:", error));
@@ -151,7 +152,7 @@ function RankingDisplay({ routes }) {
     );
   }
 
-  if (!filters.showUnranked) {
+  if (!filters.showUnranked && rankingType === "global") {
     refinedRoutes = refinedRoutes.filter(route => route.num_comparisons > 0);
   }  
 
@@ -168,6 +169,8 @@ function RankingDisplay({ routes }) {
 
   const handlePrevious = () => setCurrentPage(prev => Math.max(prev - 1, 0));
   const handleNext = () => setCurrentPage(prev => Math.min(prev + 1, totalPages - 1));
+
+  console.log("Currently displayed routes:", listToRank);
 
   return (
     <div className="container">
