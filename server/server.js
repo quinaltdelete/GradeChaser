@@ -56,6 +56,8 @@ app.get('/api/routes', async (req, res) => {
         r.area,
         r.sub_area,
         r.country,
+        r.book_grade,
+        r.estimated_v_grade,
         COALESCE(r.certainty_score, 0) AS certainty_score,
         COALESCE(c.num_comparisons, 0) AS num_comparisons
       FROM routes r
