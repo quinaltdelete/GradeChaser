@@ -246,6 +246,7 @@ app.delete('/api/delete-comparison/:id', async (req, res) => {
 // Bayesian personal ranking endpoint using a Bradley–Terry model.
 app.get('/api/personal-ranking-bayesian', authenticateToken, async (req, res) => {
   const userId = req.user.id;
+  console.log("Personal ranking request from user ID:", userId);
   try {
     // Get all comparisons (votes) made by this user.
     const comparisonsResult = await pool.query(
@@ -322,6 +323,7 @@ app.get('/api/personal-ranking-bayesian', authenticateToken, async (req, res) =>
     });
     
     // Retrieve route details and attach the computed personal score.
+    console.log("Route IDs used for personal ranking:", routeIds);
     const routesResult = await pool.query(
       'SELECT * FROM routes WHERE id = ANY($1::int[])',
       [routeIds]
