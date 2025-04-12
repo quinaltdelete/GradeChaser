@@ -149,6 +149,7 @@ app.post('/api/add-route', authenticateToken, async (req, res) => {
 app.post("/api/add-comparison", authenticateToken, async (req, res) => {
   const { newRoute, comparisonRoute, type } = req.body;
   console.log("Received payload:", req.body);
+
   try {
     // Get the route IDs from the routes table.
     const newRouteResult = await pool.query("SELECT id FROM routes WHERE name = $1;", [newRoute]);
@@ -174,18 +175,48 @@ app.post("/api/add-comparison", authenticateToken, async (req, res) => {
         "INSERT INTO route_relationships (harder_route_id, easier_route_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;",
         [newRouteId, comparisonRouteId]
       );
-    }    
+    }
 
     // Insert the vote into the user_votes table with the correct user ID.
     await pool.query(
       "INSERT INTO user_votes (user_id, easier_route_id, harder_route_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;",
-      [userId, type === "harder" ? newRouteId : comparisonRouteId, type === "harder" ? comparisonRouteId : newRouteId]
+      [
+        userId,
+        type === "harder" ? newRouteId : comparisonRouteId,
+        type === "harder" ? comparisonRouteId : newRouteId
+      ]
     );
 
-    res.json({ message: "Comparison saved successfully" });
+    // Check how many total comparisons exist in the route_relationships table. If it's a multiple of 50, run the script.
+    const totalResult = await pool.query("SELECT COUNT(*) FROM route_relationships;");
+    const totalComparisons = parseInt(totalResult.rows[0].count, 10);
+    console.log("Total comparisons so far:", totalComparisons);
+
+    // Only batch-recalculate if we've hit a multiple of 50
+    if (totalComparisons > 0 && totalComparisons % 50 === 0) {
+      try {
+        exec("node server/calculateRanks.js", (error, stdout, stderr) => {
+          if (error) {
+            console.error("Error running calculateRanks.js:", error);
+          } else {
+            console.log("Recalculated ranks after hitting 50-comparison milestone.");
+          }
+          if (stderr) {
+            console.error("calculateRanks stderr:", stderr);
+          }
+          console.log("calculateRanks output:", stdout);
+        });
+      } catch (err) {
+        console.error("Error triggering rank calculation:", err);
+      }
+    }
+
+    // Respond to the client right away (we're not awaiting the script).
+    return res.json({ message: "Comparison saved successfully" });
+
   } catch (error) {
     console.error("Error saving comparison:", error);
-    res.status(500).json({ error: "Failed to save comparison" });
+    return res.status(500).json({ error: "Failed to save comparison" });
   }
 });
 
