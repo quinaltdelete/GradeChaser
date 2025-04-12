@@ -192,14 +192,14 @@ app.post("/api/add-comparison", authenticateToken, async (req, res) => {
     const totalComparisons = parseInt(totalResult.rows[0].count, 10);
     console.log("Total comparisons so far:", totalComparisons);
 
-    // Only batch-recalculate if we've hit a multiple of 50
-    if (totalComparisons > 0 && totalComparisons % 50 === 0) {
+    // Only batch-recalculate if we've hit a multiple of 10
+    if (totalComparisons > 0 && totalComparisons % 10 === 0) {
       try {
         exec("node server/calculateRanks.js", (error, stdout, stderr) => {
           if (error) {
             console.error("Error running calculateRanks.js:", error);
           } else {
-            console.log("Recalculated ranks after hitting 50-comparison milestone.");
+            console.log("Recalculated ranks after hitting 10-comparison milestone.");
           }
           if (stderr) {
             console.error("calculateRanks stderr:", stderr);
