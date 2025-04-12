@@ -66,7 +66,7 @@ function CompareRoutesPage({ refetchRoutes }) {
 
     // Try a certain number of times to find a new pair
     let attempts = 0;
-    while (attempts < 100) {
+    while (attempts < 50) {
       // pick two random distinct indexes
       const i1 = Math.floor(Math.random() * unskipped.length);
       const i2 = Math.floor(Math.random() * unskipped.length);
@@ -184,13 +184,15 @@ function CompareRoutesPage({ refetchRoutes }) {
           return updated;
         });
 
-        // Optionally recalculate ranks
+        /* COMMENTED OUT TO TEST BATCHING
+        // Recalculate ranks
         await fetch(`/api/recalculate-ranks`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`
           }
         });
+        */
 
         // Get a new pair
         pickRandomPair();
