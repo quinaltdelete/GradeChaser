@@ -237,12 +237,6 @@ function CompareRoutesPage({ refetchRoutes }) {
 
   const handleBackToHome = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await fetch(`/api/recalculate-ranks`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
       await refetchRoutes();
 
       navigate("/");
