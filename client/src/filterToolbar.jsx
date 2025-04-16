@@ -11,7 +11,6 @@ function FilterToolbar({ routes, onFilterChange }) {
   const [vGrade, setVGrade] = useState("");
   const [name, setName] = useState("");
   const [rank, setRank] = useState("");
-  const [showUnranked, setShowUnranked] = useState(false);
 
   // State to store applied refinement filters (for display as active tags).
   const [appliedFilters, setAppliedFilters] = useState({});
