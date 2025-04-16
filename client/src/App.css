@@ -1,89 +1,58 @@
 :root {
-  --primary-color: #1a97b7;
-  --secondary-color: #196baf;
-  --background-color: #fdfdfd;
-  --border-color: #eaeaea;
+  --primary-color: #000000;
+  --secondary-color: #444444;
+  --background-color: #f9f9f6;
+  --border-color: #dcdcdc;
+  --font-family: 'Fira Code', 'Courier New', monospace;
 }
 
+/* ===== Base Layout & Typography ===== */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  line-height: 1.5;
+}
+
+/* Titles */
+h1, h2, h3, h4, h5 {
+  text-align: left;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Links */
+a {
+  color: #3b6fd1;
+  text-decoration: none;
+  font-weight: 500;
+}
+a:hover {
+  color: #264ba5;
+  text-decoration: underline;
+}
+
+/* ===== Containers ===== */
 #root {
   min-height: 700px;
   max-width: 1280px;
   margin: 0 auto;
   padding: 1rem;
-  text-align: center;
   box-sizing: border-box;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-.ranking-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.ranking-table th,
-.ranking-table td {
-  padding: 6px 8px;
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.ranking-table th {
-  background-color: #f9f9f9;
-}
-
-@keyframes logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-/* General reset for a clean look */
-body, html {
-  margin: 0;
-  padding: 0;
-  font-size: 14px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background-color: var(--background-color);
-  color: #333;
-  line-height: 1.4;
-}
-
-/* Container styling for pages */
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 10px;
+  padding: 20px;
+  text-align: left;
 }
 
-/* Header & navigation styles */
+/* ===== Header / Navigation ===== */
 header {
   display: flex;
   align-items: center;
@@ -94,35 +63,52 @@ header {
 }
 
 nav a, nav button {
-  color: #333;
+  color: var(--primary-color);
   text-decoration: none;
   padding: 5px 10px;
   font-weight: 600;
 }
-
 nav a:hover, nav button:hover {
-  color: var(--primary-color);
+  color: var(--secondary-color);
 }
 
-/* Buttons */
+/* ===== Buttons ===== */
 button {
   padding: 6px 12px;
   border: none;
   background-color: var(--primary-color);
   color: white;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
+  font-family: var(--font-family);
+  max-width: 200px;
 }
-
 button:hover {
   background-color: var(--secondary-color);
 }
 
-/* Form styles */
+/* Button Groups */
+.button-group,
+.left-button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.button-group {
+  justify-content: center;
+}
+.left-button-group {
+  justify-content: flex-start;
+}
+
+/* ===== Forms ===== */
 form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 form input[type="text"],
@@ -130,43 +116,24 @@ form input[type="password"],
 form input[type="email"],
 form input[type="number"],
 form select {
-  padding: 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
   width: 100%;
+  max-width: 300px;
 }
 
-form input:focus, form select:focus {
+form input:focus,
+form select:focus {
   border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 5px rgba(0,123,255,0.2);
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+.container label {
+  display: block;
+  margin-bottom: 6px;
 }
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border-color);
-  text-align: left;
-}
-
-th {
-  background-color: #f4f4f4;
-  font-weight: 600;
-}
-
-/* Links */
-a {
-  color: var(--primary-color);
-}
-
-a:hover {
-  text-decoration: underline;
+.container input {
+  margin-top: 4px;
+  margin-bottom: 12px;
 }
 
 .error-message {
@@ -175,40 +142,42 @@ a:hover {
   margin-bottom: 10px;
 }
 
-.container label {
-  display: block;
-  margin-bottom: 8px;
+/* ===== Tables ===== */
+table,
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
 
-.container input {
-  margin-top: 5px;
-  margin-bottom: 15px;
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-family: var(--font-family);
 }
 
-.button-group {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-  justify-content: center;
+th {
+  background-color: #f4f4f4;
+  font-weight: 600;
 }
 
-.left-button-group {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-  justify-content: left;
+.ranking-table th {
+  background-color: #f9f9f9;
 }
 
+/* ===== Filter Toolbar ===== */
 .filter-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: .8rem;
-  padding: 10px;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 8px 12px;
   border: 1px solid var(--border-color);
   background-color: var(--background-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .filter-toolbar label {
@@ -219,20 +188,49 @@ a:hover {
   font-size: 14px;
 }
 
-.filter-toolbar input {
+.filter-toolbar input,
+.filter-toolbar select {
   height: 24px;
   padding: 4px 8px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-family: var(--font-family);
 }
 
-.filter-toolbar button, 
-.filter-toolbar select {
+.filter-toolbar button {
   height: 24px;
   padding: 4px 12px;
   font-size: 14px;
 }
 
+/* ===== Other Misc Elements ===== */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
 
+.card {
+  padding: 2em;
+}
+.read-the-docs {
+  color: #888;
+}
 
+/* ===== Animations ===== */
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}

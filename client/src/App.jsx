@@ -64,7 +64,7 @@ function App() {
   return (
     <Router>
       <div className="container">
-        <h1>Gradechaser</h1>
+        <h1>Climbed Out</h1>
         <h3>Consensus Grading</h3>
         {/*Image to come*/}
       </div>
