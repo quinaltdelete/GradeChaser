@@ -15,7 +15,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function App() {
   const [routes, setRoutes] = useState([]);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(
+    import.meta.env.MODE === 'development'
+      ? { username: 'dev_user' }
+      : null
+  );  
 
   const refetchRoutes = () => {
     return fetch(`/api/routes`)
@@ -69,27 +73,32 @@ function App() {
         {/*Image to come*/}
       </div>
 
-      {user && <Header user={user} setUser={setUser} />}
-      <Routes>
-        {user ? (
-          <>
-            <Route path="/" element={<HomePage routes={routes} user={user} />} />
-            <Route path="/add-route" element={<AddRoutePage />} />
-            <Route path="/add-route/:routeName" element={<AddRoutePage />} />
-            <Route path="/route/:id" element={<RoutePage user={user} />} />
-            <Route path="/ranking" element={<RankingDisplay routes={routes} />} />
-            <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
-            <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </>
-        ) : (
-          <>
-            <Route path="/login" element={<LoginPage setUser={setUser} />} />
-            <Route path="/signup" element={<SignupPage setUser={setUser} />} />
-            <Route path="*" element={<Navigate to="/login" />} />
-          </>
-        )}
-      </Routes>
+      <div className="container user-bar">
+        {user && <Header user={user} setUser={setUser} />}
+      </div>
+
+      <div className="container main-content">
+        <Routes>
+          {user ? (
+            <>
+              <Route path="/" element={<HomePage routes={routes} user={user} />} />
+              <Route path="/add-route" element={<AddRoutePage />} />
+              <Route path="/add-route/:routeName" element={<AddRoutePage />} />
+              <Route path="/route/:id" element={<RoutePage user={user} />} />
+              <Route path="/ranking" element={<RankingDisplay routes={routes} />} />
+              <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
+              <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </>
+          ) : (
+            <>
+              <Route path="/login" element={<LoginPage setUser={setUser} />} />
+              <Route path="/signup" element={<SignupPage setUser={setUser} />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </>
+          )}
+        </Routes>
+      </div>
     </Router>
   );
 }

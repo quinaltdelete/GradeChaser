@@ -173,7 +173,7 @@ function RankingDisplay({ routes }) {
   console.log("Currently displayed routes:", listToRank);
 
   return (
-    <div className="container">
+    <div>
       {/* Container for the buttons side by side */}
       <div className="left-button-group">
         <button

@@ -72,7 +72,6 @@ function FilterToolbar({ routes, onFilterChange }) {
             onChange={e => setArea(e.target.value)}
             list="area-list"
             placeholder="Area"
-            style={{ width: "100px" }}
           />
           <datalist id="area-list">
             {uniqueAreas.map((a, index) => (
@@ -92,7 +91,6 @@ function FilterToolbar({ routes, onFilterChange }) {
             onChange={e => setSubArea(e.target.value)}
             list="subarea-list"
             placeholder="Zone"
-            style={{ width: "100px" }}
           />
           <datalist id="subarea-list">
             {uniqueSubAreas.map((s, index) => (
@@ -112,7 +110,6 @@ function FilterToolbar({ routes, onFilterChange }) {
             onChange={e => setCountry(e.target.value)}
             list="country-list"
             placeholder="Country"
-            style={{ width: "100px" }}
           />
           <datalist id="country-list">
             {uniqueCountries.map((c, index) => (
@@ -147,7 +144,6 @@ function FilterToolbar({ routes, onFilterChange }) {
             onChange={e => setName(e.target.value)}
             list="name-list"
             placeholder="Climb Name"
-            style={{ width: "120px" }}
           />
           <datalist id="name-list">
             {uniqueNames.map((n, index) => (
@@ -166,7 +162,6 @@ function FilterToolbar({ routes, onFilterChange }) {
             value={rank}
             onChange={e => setRank(e.target.value)}
             placeholder="#"
-            style={{ width: "60px" }}
           />
         </label>
       </div>
@@ -246,7 +241,7 @@ function FilterToolbar({ routes, onFilterChange }) {
       )}
 
       {/* Filter button */}
-      <div>
+      <div className="filter-button-wrapper">
         <button onClick={handleFilter}>
           Filter
         </button>
