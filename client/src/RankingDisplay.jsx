@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function RankingDisplay({ routes }) {
   const navigate = useNavigate(); 
+  const [showUnranked, setShowUnranked] = useState(false);
 
   // Global routes sorted by calculated_rank in descending order.
   const sortedGlobalRoutes = Array.isArray(routes)
@@ -124,37 +125,19 @@ function RankingDisplay({ routes }) {
   };
 
   // Compute refined routes using only the refinement filters.
-  let refinedRoutes = listToRank;
-  if (filters.area) {
-    refinedRoutes = refinedRoutes.filter(route =>
-      route.area.toLowerCase().includes(filters.area.toLowerCase())
-    );
-  }
-  if (filters.subArea) {
-    refinedRoutes = refinedRoutes.filter(route =>
-      route.sub_area.toLowerCase().includes(filters.subArea.toLowerCase())
-    );
-  }
-  if (filters.country) {
-    refinedRoutes = refinedRoutes.filter(route =>
-      route.country.toLowerCase().includes(filters.country.toLowerCase())
-    );
-  }
-  if (filters.certainty) {
-    const threshold = parseFloat(filters.certainty);
-    refinedRoutes = refinedRoutes.filter(route =>
-      route.certainty_score >= threshold
-    );
-  }
-  if (filters.vGrade) {
-    refinedRoutes = refinedRoutes.filter(route =>
-      route.estimated_v_grade === filters.vGrade
-    );
-  }
-
-  if (!filters.showUnranked && rankingType === "global") {
-    refinedRoutes = refinedRoutes.filter(route => route.num_comparisons > 0);
-  }  
+  let refinedRoutes = listToRank.filter(route => {
+    // Exclude unranked unless showUnranked is true
+    if (!showUnranked && !route.has_comparisons) return false;
+  
+    // Apply refinement filters
+    if (filters.area && !route.area.toLowerCase().includes(filters.area.toLowerCase())) return false;
+    if (filters.subArea && !route.sub_area.toLowerCase().includes(filters.subArea.toLowerCase())) return false;
+    if (filters.country && !route.country.toLowerCase().includes(filters.country.toLowerCase())) return false;
+    if (filters.certainty && route.certainty_score < parseFloat(filters.certainty)) return false;
+    if (filters.vGrade && route.estimated_v_grade !== filters.vGrade) return false;
+  
+    return true;
+  });  
 
   const totalPages = Math.ceil(refinedRoutes.length / itemsPerPage);
   const startIndex = currentPage * itemsPerPage;
@@ -174,7 +157,8 @@ function RankingDisplay({ routes }) {
 
   return (
     <div>
-      {/* Container for the buttons side by side */}
+      <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking ({rankingType}):</p>
+
       <div className="left-button-group">
         <button
           onClick={() => {
@@ -182,7 +166,7 @@ function RankingDisplay({ routes }) {
             setCurrentPage(0);
           }}
         >
-          {rankingType === "global" ? "Switch to personal rankings" : "Switch to global rankings"}
+          {rankingType === "global" ? "See personal ranking" : "See global ranking"}
         </button>
 
         <Link to="/add-route">
@@ -196,7 +180,16 @@ function RankingDisplay({ routes }) {
 
       <FilterToolbar routes={routes} onFilterChange={handleFilterChange} />
 
-      <p>Overall Ranking ({rankingType}):</p>
+      <div style={{ margin: "8px" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", padding: "0px" }}>
+          <input
+            type="checkbox"
+            checked={showUnranked}
+            onChange={() => setShowUnranked(prev => !prev)}
+          />
+          Show unranked climbs
+        </label>
+      </div>
       
       <table className="ranking-table">
         <thead>
@@ -231,7 +224,7 @@ function RankingDisplay({ routes }) {
         </tbody>
       </table>
 
-      <div className="button-group">
+      <div className="left-button-group">
         <button onClick={handlePrevious} disabled={currentPage === 0}>
           Show previous {itemsPerPage}
         </button>

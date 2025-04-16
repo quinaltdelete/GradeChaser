@@ -119,21 +119,6 @@ function FilterToolbar({ routes, onFilterChange }) {
         </label>
       </div>
 
-      {/* Certainty
-      <div>
-        <label>
-          <span>Min Certainty: </span>
-          <input
-            type="number"
-            value={certainty}
-            onChange={e => setCertainty(e.target.value)}
-            placeholder="Min"
-            style={{ width: "60px" }}
-          />
-        </label>
-      </div>
-      */}
-
       {/* Name */}
       <div className="filter-item">
         <label>
@@ -197,21 +182,9 @@ function FilterToolbar({ routes, onFilterChange }) {
         </label>
       </div>
 
-      {/* Checkbox for showing unranked climbs */}
-      <div className="filter-item">
-        <label>
-          <input
-            type="checkbox"
-            checked={showUnranked}
-            onChange={(e) => setShowUnranked(e.target.checked)}
-          />
-          Show unranked climbs
-        </label>
-      </div>
-
       {/* Active refinement filters (tags) */}
       {Object.keys(appliedFilters).length > 0 && (
-        <div style={{ width: "100%", marginTop: "0.5rem" }}>
+        <div>
           {appliedFilters.area && (
             <span style={tagStyle}>
               Area: {appliedFilters.area} <button onClick={() => clearFilter("area")}>×</button>
@@ -243,7 +216,7 @@ function FilterToolbar({ routes, onFilterChange }) {
       {/* Filter button */}
       <div className="filter-button-wrapper">
         <button onClick={handleFilter}>
-          Filter
+          Apply filters
         </button>
       </div>
 

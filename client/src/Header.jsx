@@ -11,7 +11,7 @@ function Header({ user, setUser }) {
 
   return (
     <div>
-      <span>Welcome, {user.username}</span>
+      <span>Welcome, {user.username} | </span>
       <Link to="/account">Account</Link>
       <button onClick={handleLogout} style={{ marginLeft: "20px" }}>Logout</button>
     </div>
