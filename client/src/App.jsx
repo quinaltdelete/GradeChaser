@@ -9,9 +9,9 @@ import SignupPage from "./SignupPage";
 import AccountManagement from "./AccountManagement";
 import Header from "./Header";
 import CompareRoutesPage from "./CompareRoutesPage";
+import ForgotPasswordPage from "./ForgotPasswordPage";
+import ResetPasswordPage from "./ResetPasswordPage";
 import "./App.css";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function App() {
   const [routes, setRoutes] = useState([]);
@@ -88,6 +88,8 @@ function App() {
               <Route path="/ranking" element={<RankingDisplay routes={routes} />} />
               <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
               <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </>
           ) : (

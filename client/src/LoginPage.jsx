@@ -60,6 +60,9 @@ function LoginPage({ setUser }) {
         <button type="submit">Login</button>
       </form>
       <p>
+        Forgot your password? <Link to="/forgot-password">Reset it here</Link>
+      </p>
+      <p>
         Don't have an account? <Link to="/signup">Sign up</Link>
       </p>
     </div>
