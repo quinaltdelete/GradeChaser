@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const router = express.Router();
@@ -197,7 +198,7 @@ router.post('/reset-password/:token', async (req, res) => {
     const userId = result.rows[0].user_id;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(`UPDATE users SET password = $1 WHERE id = $2`, [hashedPassword, userId]);
+    await pool.query(`UPDATE users SET password = $1 WHERE id = $2`, [hash, userId]);
     await pool.query(`DELETE FROM password_reset_tokens WHERE token = $1`, [token]);
 
     res.json({ message: 'Password reset successful' });
