@@ -79,6 +79,8 @@ function App() {
 
       <div className="container main-content">
         <Routes>
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           {user ? (
             <>
               <Route path="/" element={<HomePage routes={routes} user={user} />} />
@@ -88,8 +90,6 @@ function App() {
               <Route path="/ranking" element={<RankingDisplay routes={routes} />} />
               <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
               <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </>
           ) : (
