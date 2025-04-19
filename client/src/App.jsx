@@ -58,6 +58,29 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const res = await fetch(`/api/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (!res.ok) {
+            localStorage.removeItem("token");
+            setUser(null);
+          }
+        } catch (err) {
+          console.error("Periodic token check failed:", err);
+          localStorage.removeItem("token");
+          setUser(null);
+        }
+      }
+    }, 10 * 60 * 1000); // every 10 minutes
+  
+    return () => clearInterval(interval);
+  }, []);  
+
   // Fetch routes only if user is logged in.
   useEffect(() => {
     if (user) {
