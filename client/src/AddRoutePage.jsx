@@ -365,7 +365,7 @@ function AddRoutePage({ setPage }) {
               window.location.reload()}
             }
             }>
-              Done adding comparisons
+              Done
           </button>
         </div>
       )}
