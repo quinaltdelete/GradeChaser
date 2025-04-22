@@ -47,8 +47,6 @@ async function calculateBradleyTerryRanks() {
       adjacencyReversed[easier_route_id].add(harder_route_id);
     }
     
-    // -- STEP 3: For each route, run BFS to find all descendants and ancestors --
-    
     // allDescendants[r] = all routes that "r" can reach (r is harder than them).
     // allAncestors[r]   = all routes that can reach "r" (i.e., all routes that are harder than r).
     let allDescendants = {};
@@ -90,12 +88,7 @@ async function calculateBradleyTerryRanks() {
       }
       allAncestors[r] = visitedAnc;
     }
-    
-    // At this point, you have two sets for each route:
-    //    allDescendants[r] = { all routes r is harder than (direct or indirect) }
-    //    allAncestors[r]   = { all routes that are harder than r (direct or indirect) }
-    
-    // You can then compute a coverage-based certainty. For example:
+
     let certaintyScores = {};
     for (const r of routes) {
       const ancestorSet = allAncestors[r];
@@ -103,17 +96,15 @@ async function calculateBradleyTerryRanks() {
       const unionSet = new Set([...ancestorSet, ...descendantSet]); 
       const coverage = unionSet.size / (routes.length - 1);
 
-      certaintyScores[r] = coverage * 100;               // turn it into a 0..100 scale
+      certaintyScores[r] = coverage * 100;    
     }
     
-    // Then finally, update your DB with the new certainty scores:
     for (const r of routes) {
       await pool.query(
         "UPDATE routes SET certainty_score = $1 WHERE id = $2;",
         [certaintyScores[r], r]
       );
     }
-
 
 
     console.log(`Ranking ${routes.length} routes based on ${comparisons.length} comparisons using Bradley–Terry model...`);

@@ -282,17 +282,19 @@ function AddRoutePage({ setPage }) {
             ))}
           </datalist>
           <br />
-          <button onClick={handleSaveRoute}>Save Route</button>
-          <button onClick={() => navigate("/")}>Cancel</button>
+          <div className="left-button-group">
+            <button onClick={handleSaveRoute}>Save Route</button>
+            <button onClick={() => navigate("/")}>Cancel</button>
+          </div>
         </div>
       ) : (
         <div>
           <h3>Comparisons for {route.name}</h3>
 
           {/* Harder Route Form */}
-          <div>
+          <div className="comparison-entry">
             <label>
-              Add a route that's harder than {route.name}:
+              Enter a route that's harder than {route.name}:
               <input 
                 type="text" 
                 name="harder" 
@@ -315,9 +317,9 @@ function AddRoutePage({ setPage }) {
           </div>
 
           {/* Easier Route Form */}
-          <div>
+          <div className="comparison-entry">
             <label>
-              Add a route that's easier than {route.name}:
+              Enter a route that's easier than {route.name}:
               <input 
                 type="text" 
                 name="easier" 
@@ -343,7 +345,7 @@ function AddRoutePage({ setPage }) {
           {/* Display Saved Comparisons */}
           {savedComparisons.length > 0 && (
             <div>
-              <h4>Saved Comparisons:</h4>
+              <h4>Your Comparisons:</h4>
               <ul>
                 {savedComparisons.map((comparison, index) => (
                   <li key={index}>{comparison}</li>
@@ -352,7 +354,7 @@ function AddRoutePage({ setPage }) {
             </div>
           )}
 
-          <button onClick={async () => {
+          <button className="left-button-group" onClick={async () => {
             try {
               // Trigger rank recalculation.
               await fetch(`/api/recalculate-ranks`, { method: "POST" });
@@ -363,7 +365,7 @@ function AddRoutePage({ setPage }) {
               window.location.reload()}
             }
             }>
-              Finish
+              Done adding comparisons
           </button>
         </div>
       )}

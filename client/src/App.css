@@ -268,6 +268,12 @@ th {
   white-space: nowrap;
 }
 
+/* ===== Comparison pages ===== */
+.comparison-entry {
+  margin: 10px;
+}
+
+
 /* ===== Other Misc Elements ===== */
 .logo {
   height: 6em;
