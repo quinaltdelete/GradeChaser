@@ -251,7 +251,7 @@ function CompareRoutesPage({ refetchRoutes }) {
       <h3>Only compare routes you've sent. Even if you "know" one route is harder than the other - if you haven't sent it, don't rate it. </h3>
       <div style={{ display: "flex", justifyContent: "space-around", marginBottom: "20px" }}>
         {/* Left Route */}
-        <div style={{ border: "1px solid #ccc", padding: "10px", width: "40%" }}>
+        <div className="compare-route-box">
           <h3>{leftRoute.name}</h3>
           <p>Area: {leftRoute.area}</p>
           <p>Zone: {leftRoute.sub_area}</p>
@@ -263,7 +263,7 @@ function CompareRoutesPage({ refetchRoutes }) {
         </div>
 
         {/* Right Route */}
-        <div style={{ border: "1px solid #ccc", padding: "10px", width: "40%" }}>
+        <div className="compare-route-box">
           <h3>{rightRoute.name}</h3>
           <p>Area: {rightRoute.area}</p>
           <p>Zone: {rightRoute.sub_area}</p>

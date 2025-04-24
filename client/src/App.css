@@ -97,7 +97,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-family: var(--font-family);
-  max-width: 200px;
+  max-width: 250px;
 }
 button:hover {
   background-color: var(--secondary-color);
@@ -163,6 +163,12 @@ form select:focus {
   color: red;
   font-size: 0.9em;
   margin-bottom: 10px;
+}
+
+.compare-route-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 50%;
 }
 
 /* ===== Tables ===== */
