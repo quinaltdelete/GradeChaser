@@ -225,11 +225,19 @@ function RankingDisplay({ routes }) {
       </table>
 
       <div className="left-button-group">
-        <button onClick={handlePrevious} disabled={currentPage === 0}>
-          Show previous {itemsPerPage}
+        <button
+          className="link-button"
+          onClick={handlePrevious}
+          disabled={currentPage === 0}
+        >
+           {"\u2190"} Show previous {itemsPerPage}
         </button>
-        <button onClick={handleNext} disabled={currentPage >= totalPages - 1}>
-          Show next {itemsPerPage}
+        <button
+          className="link-button"
+          onClick={handleNext}
+          disabled={currentPage >= totalPages - 1}
+        >
+          Show next {"\u2192"} {itemsPerPage}
         </button>
       </div>
     </div>
