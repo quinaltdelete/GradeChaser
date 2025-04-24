@@ -248,8 +248,10 @@ function CompareRoutesPage({ refetchRoutes }) {
   return (
     <div>
       <h2>Compare Routes</h2>
-      <h3>Only compare routes you've sent. Even if you "know" one route is harder than the other - if you haven't sent it, don't rate it. </h3>
-      <div style={{ display: "flex", justifyContent: "space-around", marginBottom: "20px" }}>
+      <p className="compare-routes-header">
+        Only compare routes you've sent. Even if you <em>know</em> one route is harder than the other – if you haven't sent it, don't rate it.
+      </p>
+      <div className="compare-cards-container">
         {/* Left Route */}
         <div className="compare-route-box">
           <h3>{leftRoute.name}</h3>
