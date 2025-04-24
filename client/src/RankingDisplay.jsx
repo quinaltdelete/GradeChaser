@@ -237,7 +237,7 @@ function RankingDisplay({ routes }) {
           onClick={handleNext}
           disabled={currentPage >= totalPages - 1}
         >
-          Show next {"\u2192"} {itemsPerPage}
+          Show next {itemsPerPage} {"\u2192"}
         </button>
       </div>
     </div>
