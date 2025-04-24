@@ -112,7 +112,6 @@ button:hover {
   flex-wrap: wrap;
   margin: 20px 0 12px 0;
   justify-content: flex-start;
-  align-items: flex-start;
 }
 .button-group {
   justify-content: center;
@@ -164,12 +163,6 @@ form select:focus {
   color: red;
   font-size: 0.9em;
   margin-bottom: 10px;
-}
-
-.compare-route-box {
-  border: 1px solid #ccc;
-  padding: 10px;
-  width: 40%;
 }
 
 /* ===== Tables ===== */
@@ -301,6 +294,21 @@ th {
   color: #888;
 }
 
+/* ===== Suggestion drop downs ===== */
+.suggestion-list {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+  border: 1px solid gray;
+}
+.suggestion-list li {
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.suggestion-list li:hover {
+  background-color: #eee;
+}
+
 /* ===== Animations ===== */
 @keyframes logo-spin {
   from { transform: rotate(0deg); }
@@ -332,14 +340,14 @@ th {
   flex-wrap: wrap;
 }
 
-/* Enhancing existing .compare-route-box */
 .compare-route-box {
+  border: 1px solid #ccc;
   background-color: #f5f5f5;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   padding: 16px;
   width: 100%;
-  max-width: 360px;
+  max-width: 450px;
   flex: 1 1 30%;
   display: flex;
   flex-direction: column;

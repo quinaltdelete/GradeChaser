@@ -249,7 +249,9 @@ function CompareRoutesPage({ refetchRoutes }) {
     <div>
       <h2>Compare Routes</h2>
       <p className="compare-routes-header">
-        Only compare routes you've sent. Even if you <em>know</em> one route is harder than the other – if you haven't sent it, don't rate it.
+        Only compare routes you've sent. Even if you "know" one route is harder than the other, 
+        if you haven't sent it, don't rate it. Try to base your decision on how hard the route felt 
+        in the moment. 
       </p>
       <div className="compare-cards-container">
         {/* Left Route */}

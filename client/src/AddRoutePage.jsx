@@ -223,7 +223,7 @@ function AddRoutePage({ setPage }) {
           </label>
 
           {suggestions.length > 0 && (
-            <ul style={{ border: "1px solid gray", padding: 5 }}>
+            <ul className="suggestion-list">
               {suggestions.map((s, index) => (
                 <li 
                   key={s.id || index} 
