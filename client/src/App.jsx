@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate, Link } from "react-router-dom";
 import HomePage from "./HomePage"; 
 import AddRoutePage from "./AddRoutePage";
 import RankingDisplay from "./RankingDisplay";
@@ -91,10 +91,14 @@ function App() {
   return (
     <Router>
       <div className="container">
-        <h1>Climbed Out</h1>
+        <h1>
+          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            Climbed Out
+          </Link>
+        </h1>
         <h3>Consensus Grading</h3>
-        {/*Image to come*/}
       </div>
+      {/*Image to come*/}
 
       <div className="container user-bar">
         {user && <Header user={user} setUser={setUser} />}

@@ -452,3 +452,45 @@ th {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* ===== Route page ===== */
+.comparison-sections {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 1.5em;
+}
+
+.comparison-column {
+  flex: 1;
+  min-width: 300px;
+}
+
+.comparison-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comparison-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-right: 8px;
+}
+
+.delete-button {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.delete-button:hover {
+  background-color: #333;
+}
