@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
@@ -64,7 +64,11 @@ function RoutePage({ user }) {
             <ul className="comparison-list">
               {harderComparisons.map(comp => (
                 <li key={comp.id}>
-                  <span>You said <strong>{comp.compared_route}</strong> is harder than {route.name}</span>
+                  <span>
+                    You said <Link to={`/route/${comp.compared_route_id}`} style={{ textDecoration: "none", color: "blue" }}>
+                      <strong>{comp.compared_route}</strong>
+                    </Link> is harder than {route.name}
+                  </span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
               ))}
@@ -81,7 +85,11 @@ function RoutePage({ user }) {
             <ul className="comparison-list">
               {easierComparisons.map(comp => (
                 <li key={comp.id}>
-                  <span>You said <strong>{comp.compared_route}</strong> is easier than {route.name}</span>
+                  <span>
+                    You said <Link to={`/route/${comp.compared_route_id}`} style={{ textDecoration: "none", color: "blue" }}>
+                      <strong>{comp.compared_route}</strong>
+                    </Link> is easier than {route.name}
+                  </span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
               ))}
