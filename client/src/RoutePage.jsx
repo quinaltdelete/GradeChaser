@@ -51,20 +51,20 @@ function RoutePage({ user }) {
   return (
     <div className="container">
       <h2 style={{ borderBottom: "1px solid #ccc", paddingBottom: "0.3em" }}>
-        {route.name} – {route.area}
+        <strong>{route.name}</strong> – {route.area} - {route.sub_area}
       </h2>
   
       <h3>Your Comparisons</h3>
   
-      <div className="comparison-sections">
+      <div className="comparison-sections" style={{ borderBottom: "1px solid #ccc", paddingBottom: "0.3em" }}>
         {/* Harder Comparisons */}
         <div className="comparison-column">
-          <h4>Climbs Harder than {route.name}</h4>
+          <h4>Climbs you said are harder than {route.name}</h4>
           {harderComparisons.length > 0 ? (
             <ul className="comparison-list">
               {harderComparisons.map(comp => (
                 <li key={comp.id}>
-                  <span>{comp.compared_route} is harder than {route.name}</span>
+                  <span>You said <strong>{comp.compared_route}</strong> is harder than {route.name}</span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
               ))}
@@ -76,12 +76,12 @@ function RoutePage({ user }) {
   
         {/* Easier Comparisons */}
         <div className="comparison-column">
-          <h4>Climbs Easier than {route.name}</h4>
+          <h4>Climbs you said are easier than {route.name}</h4>
           {easierComparisons.length > 0 ? (
             <ul className="comparison-list">
               {easierComparisons.map(comp => (
                 <li key={comp.id}>
-                  <span>{comp.compared_route} is easier than {route.name}</span>
+                  <span>You said <strong>{comp.compared_route}</strong> is easier than {route.name}</span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
               ))}
