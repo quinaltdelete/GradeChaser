@@ -122,11 +122,11 @@ function AccountManagement({ user, setUser }) {
           </form>        
         )}
 
-        <h3 onClick={() => toggleSection("delete")} style={{ cursor: "pointer", color: "red" }}>
+        <h3 onClick={() => toggleSection("delete")} style={{ cursor: "pointer" }}>
           {expandedSection === "delete" ? "▼" : "▶"} Delete Account
         </h3>
         {expandedSection === "delete" && (
-          <div>
+          <div style={{ marginLeft: "20px" }}>
             <p>This action is irreversible.</p>
             <button
               onClick={handleDeleteAccount}
