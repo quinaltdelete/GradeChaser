@@ -117,57 +117,64 @@ function AddRoutePage({ setPage }) {
         <div className="form-block">
         <label>
           Name:
-          <input type="text" value={route.name} onChange={handleNameChange} />
+          <input
+            type="text"
+            value={route.name}
+            onChange={handleNameChange}
+          />
         </label>
-      
-        {suggestions.length > 0 && (
-          <ul style={{ border: "1px solid gray", padding: 5 }}>
-            {suggestions.map((s, index) => (
-              <li 
-                key={s.id || index} 
-                onClick={() => handleSuggestionClick(s)} 
-                style={{ cursor: "pointer" }}
-              >
-                {s.isDidYouMean ? `Did you mean "${s.name}"?` : s.name}
-              </li>
-            ))}
-          </ul>
-        )}
+        <datalist id="route-name-options">
+          {allRoutes.map((r, index) => (
+            <option key={r.id || index} value={r.name} />
+          ))}
+        </datalist>
       
         <label>
           Area:
-          <input 
-            type="text" 
-            value={route.area} 
+          <input
+            type="text"
+            value={route.area}
             onChange={(e) => setRoute({ ...route, area: e.target.value })}
             list="area-list"
           />
         </label>
-        <datalist id="area-list">...</datalist>
+        <datalist id="area-list">
+          {Array.from(new Set(allRoutes.map(r => r.area))).filter(Boolean).map((a, index) => (
+            <option key={index} value={a} />
+          ))}
+        </datalist>
       
         <label>
           Sub-Area:
-          <input 
-            type="text" 
-            value={route.sub_area} 
+          <input
+            type="text"
+            value={route.sub_area}
             onChange={(e) => setRoute({ ...route, sub_area: e.target.value })}
             list="subarea-list"
           />
         </label>
-        <datalist id="subarea-list">...</datalist>
+        <datalist id="subarea-list">
+          {Array.from(new Set(allRoutes.map(r => r.sub_area))).filter(Boolean).map((s, index) => (
+            <option key={index} value={s} />
+          ))}
+        </datalist>
       
         <label>
           Country:
-          <input 
-            type="text" 
-            value={route.country} 
+          <input
+            type="text"
+            value={route.country}
             onChange={(e) => setRoute({ ...route, country: e.target.value })}
             list="country-list"
           />
         </label>
-        <datalist id="country-list">...</datalist>
+        <datalist id="country-list">
+          {Array.from(new Set(allRoutes.map(r => r.country))).filter(Boolean).map((c, index) => (
+            <option key={index} value={c} />
+          ))}
+        </datalist>
       
-        <div className="button-group" style={{ marginTop: "1em" }}>
+        <div className="left-button-group">
           <button onClick={handleSaveRoute}>Next</button>
           <button onClick={() => navigate("/")}>Cancel</button>
         </div>
