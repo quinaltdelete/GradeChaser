@@ -78,7 +78,7 @@ function AccountManagement({ user, setUser }) {
 
       <div>
         <h3 onClick={() => toggleSection("stats")} style={{ cursor: "pointer" }}>
-          ▶ Your Stats
+          {expandedSection === "stats" ? "▼" : "▶"} Your Stats
         </h3>
         {expandedSection === "stats" && (
           <div style={{ marginBottom: "1em" }}>
@@ -87,10 +87,10 @@ function AccountManagement({ user, setUser }) {
         )}
 
         <h3 onClick={() => toggleSection("password")} style={{ cursor: "pointer" }}>
-          ▶ Change Password
+          {expandedSection === "password" ? "▼" : "▶"} Change Password
         </h3>
         {expandedSection === "password" && (
-          <form onSubmit={handleChangePassword}>
+          <form onSubmit={handleChangePassword} className="form-block">
             <label>
               Current Password:
               <input
@@ -119,11 +119,11 @@ function AccountManagement({ user, setUser }) {
               />
             </label>
             <button type="submit">Change Password</button>
-          </form>
+          </form>        
         )}
 
         <h3 onClick={() => toggleSection("delete")} style={{ cursor: "pointer", color: "red" }}>
-          ▶ Delete Account
+          {expandedSection === "delete" ? "▼" : "▶"} Delete Account
         </h3>
         {expandedSection === "delete" && (
           <div>
