@@ -62,7 +62,8 @@ function RoutePage({ user }) {
           <h4>Climbs you said are harder than {route.name}</h4>
           {harderComparisons.length > 0 ? (
             <ul className="comparison-list">
-              {harderComparisons.map(comp => (
+              {harderComparisons.map(comp => {
+                console.log("comparison:", comp);
                 <li key={comp.id}>
                   <span>
                     You said <Link to={`/route/${comp.compared_route_id}`} style={{ textDecoration: "none", color: "blue" }}>
@@ -71,7 +72,7 @@ function RoutePage({ user }) {
                   </span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
-              ))}
+              })}
             </ul>
           ) : (
             <p>No harder comparisons found.</p>
@@ -83,7 +84,8 @@ function RoutePage({ user }) {
           <h4>Climbs you said are easier than {route.name}</h4>
           {easierComparisons.length > 0 ? (
             <ul className="comparison-list">
-              {easierComparisons.map(comp => (
+              {easierComparisons.map(comp => {
+                console.log("comparison:", comp);
                 <li key={comp.id}>
                   <span>
                     You said <Link to={`/route/${comp.compared_route_id}`} style={{ textDecoration: "none", color: "blue" }}>
@@ -92,7 +94,7 @@ function RoutePage({ user }) {
                   </span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
-              ))}
+              })}
             </ul>
           ) : (
             <p>No easier comparisons found.</p>
