@@ -4,11 +4,18 @@ import { useNavigate } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function AccountManagement({ user, setUser }) {
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
+
+  const [expandedSection, setExpandedSection] = useState(null);
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -18,7 +25,7 @@ function AccountManagement({ user, setUser }) {
     }
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/change-password`, {
+      const response = await fetch(`${API_BASE_URL}/api/change-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,12 +49,11 @@ function AccountManagement({ user, setUser }) {
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      return;
-    }
+    if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/delete-account`, {
+      const response = await fetch(`${API_BASE_URL}/api/delete-account`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -55,7 +61,6 @@ function AccountManagement({ user, setUser }) {
         const data = await response.json();
         setMessage(data.error || "Error deleting account.");
       } else {
-        // On successful deletion, log out and redirect to the signup page.
         localStorage.removeItem("token");
         setUser(null);
         navigate("/signup");
@@ -69,57 +74,73 @@ function AccountManagement({ user, setUser }) {
   return (
     <div className="container">
       <h2>Account Management</h2>
-      {message && <p style={{ color: "red" }}>{message}</p>}
-
-      <form onSubmit={handleChangePassword}>
-        <h3>Change Password</h3>
-        <label>
-          Current Password:
-          <input
-            type="password"
-            value={currentPassword}
-            onChange={e => setCurrentPassword(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          New Password:
-          <input
-            type="password"
-            value={newPassword}
-            onChange={e => setNewPassword(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Confirm New Password:
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={e => setConfirmPassword(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">Change Password</button>
-      </form>
-
-      <hr />
+      {message && <p className="error-message">{message}</p>}
 
       <div>
-        <h3>Delete Account</h3>
-        <p>This action is irreversible.</p>
-        <button
-          onClick={handleDeleteAccount}
-          style={{ backgroundColor: "red", color: "white" }}
-        >
-          Delete Account
-        </button>
+        <h3 onClick={() => toggleSection("stats")} style={{ cursor: "pointer" }}>
+          ▶ Your Stats
+        </h3>
+        {expandedSection === "stats" && (
+          <div style={{ marginBottom: "1em" }}>
+            <p>(Coming soon)</p>
+          </div>
+        )}
+
+        <h3 onClick={() => toggleSection("password")} style={{ cursor: "pointer" }}>
+          ▶ Change Password
+        </h3>
+        {expandedSection === "password" && (
+          <form onSubmit={handleChangePassword}>
+            <label>
+              Current Password:
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                required
+              />
+            </label>
+            <label>
+              New Password:
+              <input
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
+              />
+            </label>
+            <label>
+              Confirm New Password:
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+              />
+            </label>
+            <button type="submit">Change Password</button>
+          </form>
+        )}
+
+        <h3 onClick={() => toggleSection("delete")} style={{ cursor: "pointer", color: "red" }}>
+          ▶ Delete Account
+        </h3>
+        {expandedSection === "delete" && (
+          <div>
+            <p>This action is irreversible.</p>
+            <button
+              onClick={handleDeleteAccount}
+              style={{ backgroundColor: "red", color: "white" }}
+            >
+              Delete Account
+            </button>
+          </div>
+        )}
       </div>
 
-      <button onClick={() => navigate("/")}>Back</button>
+      <div style={{ marginTop: "2em" }}>
+        <button onClick={() => navigate("/")}>Back</button>
+      </div>
     </div>
   );
 }
