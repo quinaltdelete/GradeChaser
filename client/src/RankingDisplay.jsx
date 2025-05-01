@@ -199,9 +199,35 @@ function RankingDisplay({ routes }) {
             <th>Area</th>
             <th>Zone</th>
             <th>Country</th>
-            <th>Book Grade</th>
-            <th>Est. V-Grade</th>
-            <th>Certainty</th>
+            <th>
+              Book Grade
+              <span className="info-icon">i
+                <span className="tooltip">
+                  This is the grade of the climb according to at least one published source. 
+                  Different sources might report different grades.
+                </span>
+              </span>
+            </th>
+            <th>
+              Estimated Grade
+              <span className="info-icon">i
+                <span className="tooltip">
+                  This is what we estimate the grade for this climb should be, 
+                  based on its place in the ranking.
+                </span>
+              </span>
+            </th>
+
+            <th>
+              Certainty
+              <span className="info-icon">i
+                <span className="tooltip">
+                  This is roughly how certain we are that this climb should be at this spot in the ranking. 
+                  Climbs with low certainty might seem like they're in the wrong place in the ranking. 
+                  More climbers comparing this route will increase the certainty.
+                </span>
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
