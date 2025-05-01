@@ -121,6 +121,7 @@ function AddRoutePage({ setPage }) {
             type="text"
             value={route.name}
             onChange={handleNameChange}
+            list="route-name-options"
           />
         </label>
         <datalist id="route-name-options">
