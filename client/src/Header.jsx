@@ -13,7 +13,25 @@ function Header({ user, setUser }) {
     <div>
       <span>Welcome, {user.username} | </span>
       <Link to="/account">Account</Link>
-      <button onClick={handleLogout} style={{ marginLeft: "20px" }}>Logout</button>
+      {" | "}
+      <button
+        onClick={handleLogout}
+        className="link-button"
+        style={{
+          textDecoration: "none",
+          color: "#3b6fd1",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+          fontSize: "1em",
+          fontFamily: "inherit"
+        }}
+        onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+        onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+      >
+        Logout
+      </button>
     </div>
   );
 }
