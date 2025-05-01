@@ -196,9 +196,16 @@ form select:focus {
   max-width: 400px;
 }
 .form-block label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
   width: 100%;
 }
 .form-block input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
   width: 100%;
   box-sizing: border-box;
 }

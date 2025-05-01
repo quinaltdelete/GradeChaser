@@ -114,76 +114,64 @@ function AddRoutePage({ setPage }) {
       <h2>Rank a Route</h2>
 
       {!routeSaved ? (
-        <div>
-          <label>
-            Name:
-            <input
-              type="text"
-              value={route.name}
-              onChange={handleNameChange}
-              list="route-name-options"
-            />
-          </label>
-          <datalist id="route-name-options">
-            {allRoutes.map((r, index) => (
-              <option key={r.id || index} value={r.name} />
+        <div className="form-block">
+        <label>
+          Name:
+          <input type="text" value={route.name} onChange={handleNameChange} />
+        </label>
+      
+        {suggestions.length > 0 && (
+          <ul style={{ border: "1px solid gray", padding: 5 }}>
+            {suggestions.map((s, index) => (
+              <li 
+                key={s.id || index} 
+                onClick={() => handleSuggestionClick(s)} 
+                style={{ cursor: "pointer" }}
+              >
+                {s.isDidYouMean ? `Did you mean "${s.name}"?` : s.name}
+              </li>
             ))}
-          </datalist>
-
-          <br />
-          <label>
-            Area:
-            <input
-              type="text"
-              value={route.area}
-              onChange={(e) => setRoute({ ...route, area: e.target.value })}
-              list="area-list"
-            />
-          </label>
-          <datalist id="area-list">
-            {Array.from(new Set(allRoutes.map(r => r.area))).filter(Boolean).map((a, index) => (
-              <option key={index} value={a} />
-            ))}
-          </datalist>
-
-          <br />
-          <label>
-            Sub-Area:
-            <input
-              type="text"
-              value={route.sub_area}
-              onChange={(e) => setRoute({ ...route, sub_area: e.target.value })}
-              list="subarea-list"
-            />
-          </label>
-          <datalist id="subarea-list">
-            {Array.from(new Set(allRoutes.map(r => r.sub_area))).filter(Boolean).map((s, index) => (
-              <option key={index} value={s} />
-            ))}
-          </datalist>
-
-          <br />
-          <label>
-            Country:
-            <input
-              type="text"
-              value={route.country}
-              onChange={(e) => setRoute({ ...route, country: e.target.value })}
-              list="country-list"
-            />
-          </label>
-          <datalist id="country-list">
-            {Array.from(new Set(allRoutes.map(r => r.country))).filter(Boolean).map((c, index) => (
-              <option key={index} value={c} />
-            ))}
-          </datalist>
-
-          <br />
-          <div className="left-button-group">
-            <button onClick={handleSaveRoute}>Save Route</button>
-            <button onClick={() => navigate("/")}>Cancel</button>
-          </div>
+          </ul>
+        )}
+      
+        <label>
+          Area:
+          <input 
+            type="text" 
+            value={route.area} 
+            onChange={(e) => setRoute({ ...route, area: e.target.value })}
+            list="area-list"
+          />
+        </label>
+        <datalist id="area-list">...</datalist>
+      
+        <label>
+          Sub-Area:
+          <input 
+            type="text" 
+            value={route.sub_area} 
+            onChange={(e) => setRoute({ ...route, sub_area: e.target.value })}
+            list="subarea-list"
+          />
+        </label>
+        <datalist id="subarea-list">...</datalist>
+      
+        <label>
+          Country:
+          <input 
+            type="text" 
+            value={route.country} 
+            onChange={(e) => setRoute({ ...route, country: e.target.value })}
+            list="country-list"
+          />
+        </label>
+        <datalist id="country-list">...</datalist>
+      
+        <div className="button-group" style={{ marginTop: "1em" }}>
+          <button onClick={handleSaveRoute}>Next</button>
+          <button onClick={() => navigate("/")}>Cancel</button>
         </div>
+      </div>      
       ) : (
         <div>
           <h3>Comparisons for {route.name}</h3>
