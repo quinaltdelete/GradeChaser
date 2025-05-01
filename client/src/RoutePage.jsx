@@ -65,9 +65,7 @@ function RoutePage({ user }) {
               {harderComparisons.map(comp => (
                 <li key={comp.id}>
                   <span>
-                    You said <Link to={`/route/${comp.id}`} style={{ textDecoration: "none", color: "blue" }}>
-                      <strong>{comp.compared_route}</strong>
-                    </Link> is harder than {route.name}
+                    You said <strong>{comp.compared_route}</strong> is harder than {route.name}
                   </span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
@@ -86,9 +84,7 @@ function RoutePage({ user }) {
               {easierComparisons.map(comp => (
                 <li key={comp.id}>
                   <span>
-                    You said <Link to={`/route/${comp.id}`} style={{ textDecoration: "none", color: "blue" }}>
-                      <strong>{comp.compared_route}</strong>
-                    </Link> is easier than {route.name}
+                    You said <strong>{comp.compared_route}</strong> is easier than {route.name}
                   </span>
                   <button onClick={() => deleteComparison(comp.id)} className="delete-button">Delete</button>
                 </li>
