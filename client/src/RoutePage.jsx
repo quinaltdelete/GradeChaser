@@ -63,10 +63,9 @@ function RoutePage({ user }) {
           {harderComparisons.length > 0 ? (
             <ul className="comparison-list">
               {harderComparisons.map(comp => {
-                console.log("comparison:", comp);
                 <li key={comp.id}>
                   <span>
-                    You said <Link to={`/route/${comp.compared_route_id}`} style={{ textDecoration: "none", color: "blue" }}>
+                    You said <Link to={`/route/${comp.id}`} style={{ textDecoration: "none", color: "blue" }}>
                       <strong>{comp.compared_route}</strong>
                     </Link> is harder than {route.name}
                   </span>
@@ -85,10 +84,9 @@ function RoutePage({ user }) {
           {easierComparisons.length > 0 ? (
             <ul className="comparison-list">
               {easierComparisons.map(comp => {
-                console.log("comparison:", comp);
                 <li key={comp.id}>
                   <span>
-                    You said <Link to={`/route/${comp.compared_route_id}`} style={{ textDecoration: "none", color: "blue" }}>
+                    You said <Link to={`/route/${comp.id}`} style={{ textDecoration: "none", color: "blue" }}>
                       <strong>{comp.compared_route}</strong>
                     </Link> is easier than {route.name}
                   </span>
