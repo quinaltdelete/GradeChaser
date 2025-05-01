@@ -204,7 +204,7 @@ form select:focus {
 }
 .form-block button {
   align-self: flex-start;
-  padding: 20px
+  padding: 20px;
 }
 
 /* ===== Tables ===== */
