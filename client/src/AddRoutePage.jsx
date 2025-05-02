@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 function AddRoutePage({ setPage }) {
   const { routeName } = useParams();
   const navigate = useNavigate();
-  
+
   const [route, setRoute] = useState({
     name: "",
     area: "",
@@ -19,14 +19,17 @@ function AddRoutePage({ setPage }) {
   const [allRoutes, setAllRoutes] = useState([]);
   const [savedComparisons, setSavedComparisons] = useState([]);
 
+  /* ────────────────────────── Fetch all routes ────────────────────────── */
   useEffect(() => {
     fetch(`/api/routes`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setAllRoutes(data);
 
         if (routeName) {
-          const matchingRoute = data.find(r => r.name.toLowerCase() === routeName.toLowerCase());
+          const matchingRoute = data.find(
+            (r) => r.name.toLowerCase() === routeName.toLowerCase()
+          );
           if (matchingRoute) {
             setRoute({
               name: matchingRoute.name,
@@ -38,31 +41,41 @@ function AddRoutePage({ setPage }) {
           }
         }
       })
-      .catch(error => console.error("Error fetching routes:", error));
+      .catch((error) => console.error("Error fetching routes:", error));
   }, [routeName]);
 
-    useEffect(() => {
-      if (!route.name) return;           
-      const match = allRoutes.find(
-        r => r.name.toLowerCase() === route.name.toLowerCase()
-      );
-      if (match) {
-        setRoute(prev => ({
-          ...prev,
-          area:     match.area     || "",
-          sub_area: match.sub_area || "",
-          country:  match.country  || "",
-        }));
-      }
-    }, [route.name, allRoutes]);
+  /* ────────────────── Auto-fill Area/Sub-area/Country when name matches ────────────────── */
+  useEffect(() => {
+    if (!route.name) return;
+    const match = allRoutes.find(
+      (r) => r.name.toLowerCase() === route.name.toLowerCase()
+    );
+    if (match) {
+      setRoute((prev) => ({
+        ...prev,
+        area: match.area || "",
+        sub_area: match.sub_area || "",
+        country: match.country || "",
+      }));
+    }
+  }, [route.name, allRoutes]);
 
+  /* ────────────────────────────── CHANGED HANDLER ────────────────────────────── */
   const handleNameChange = (e) => {
-    setRoute({ ...route, name: e.target.value });
+    // Clear the other fields so stale values don’t linger while typing a new route name
+    setRoute({
+      ...route,
+      name: e.target.value,
+      area: "",
+      sub_area: "",
+      country: "",
+    });
+    setRouteSaved(false); // user is editing again
   };
 
   const handleComparisonChange = (e) => {
     const { name, value } = e.target;
-    setComparison(prev => ({ ...prev, [name]: value }));
+    setComparison((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSaveRoute = async () => {
@@ -72,7 +85,7 @@ function AddRoutePage({ setPage }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(route),
       });
@@ -89,7 +102,8 @@ function AddRoutePage({ setPage }) {
   };
 
   const saveComparison = async (type) => {
-    const comparisonRoute = type === "harder" ? comparison.harder : comparison.easier;
+    const comparisonRoute =
+      type === "harder" ? comparison.harder : comparison.easier;
     const newRouteName = route.name;
 
     if (!comparisonRoute) return;
@@ -100,12 +114,12 @@ function AddRoutePage({ setPage }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           newRoute: newRouteName,
           comparisonRoute,
-          type
+          type,
         }),
       });
 
@@ -113,9 +127,9 @@ function AddRoutePage({ setPage }) {
       if (response.ok) {
         setSavedComparisons([
           ...savedComparisons,
-          `${comparisonRoute} is ${type} than ${newRouteName}`
+          `${comparisonRoute} is ${type} than ${newRouteName}`,
         ]);
-        setComparison(prev => ({ ...prev, [type]: "" }));
+        setComparison((prev) => ({ ...prev, [type]: "" }));
       } else {
         console.error("Error saving comparison:", data);
       }
@@ -124,77 +138,86 @@ function AddRoutePage({ setPage }) {
     }
   };
 
+  /* ───────────────────────────── JSX MARKUP ───────────────────────────── */
   return (
     <div className="container">
       <h2>Rank a Route</h2>
 
       {!routeSaved ? (
         <div className="form-block">
-        <label>
-          Name:
-          <input
-            type="text"
-            value={route.name}
-            onChange={handleNameChange}
-            list="route-name-options"
-          />
-        </label>
-        <datalist id="route-name-options">
-          {allRoutes.map((r, index) => (
-            <option key={r.id || index} value={r.name} />
-          ))}
-        </datalist>
-      
-        <label>
-          Area:
-          <input
-            type="text"
-            value={route.area}
-            onChange={(e) => setRoute({ ...route, area: e.target.value })}
-            list="area-list"
-          />
-        </label>
-        <datalist id="area-list">
-          {Array.from(new Set(allRoutes.map(r => r.area))).filter(Boolean).map((a, index) => (
-            <option key={index} value={a} />
-          ))}
-        </datalist>
-      
-        <label>
-          Sub-Area:
-          <input
-            type="text"
-            value={route.sub_area}
-            onChange={(e) => setRoute({ ...route, sub_area: e.target.value })}
-            list="subarea-list"
-          />
-        </label>
-        <datalist id="subarea-list">
-          {Array.from(new Set(allRoutes.map(r => r.sub_area))).filter(Boolean).map((s, index) => (
-            <option key={index} value={s} />
-          ))}
-        </datalist>
-      
-        <label>
-          Country:
-          <input
-            type="text"
-            value={route.country}
-            onChange={(e) => setRoute({ ...route, country: e.target.value })}
-            list="country-list"
-          />
-        </label>
-        <datalist id="country-list">
-          {Array.from(new Set(allRoutes.map(r => r.country))).filter(Boolean).map((c, index) => (
-            <option key={index} value={c} />
-          ))}
-        </datalist>
-      
-        <div className="left-button-group">
-          <button onClick={handleSaveRoute}>Next</button>
-          <button onClick={() => navigate("/")}>Cancel</button>
+          <label>
+            Name:
+            <input
+              type="text"
+              value={route.name}
+              onChange={handleNameChange}
+              list="route-name-options"
+            />
+          </label>
+          <datalist id="route-name-options">
+            {allRoutes.map((r, index) => (
+              <option key={r.id || index} value={r.name} />
+            ))}
+          </datalist>
+
+          <label>
+            Area:
+            <input
+              type="text"
+              value={route.area}
+              onChange={(e) => setRoute({ ...route, area: e.target.value })}
+              list="area-list"
+            />
+          </label>
+          <datalist id="area-list">
+            {Array.from(new Set(allRoutes.map((r) => r.area)))
+              .filter(Boolean)
+              .map((a, index) => (
+                <option key={index} value={a} />
+              ))}
+          </datalist>
+
+          <label>
+            Sub-Area:
+            <input
+              type="text"
+              value={route.sub_area}
+              onChange={(e) =>
+                setRoute({ ...route, sub_area: e.target.value })
+              }
+              list="subarea-list"
+            />
+          </label>
+          <datalist id="subarea-list">
+            {Array.from(new Set(allRoutes.map((r) => r.sub_area)))
+              .filter(Boolean)
+              .map((s, index) => (
+                <option key={index} value={s} />
+              ))}
+          </datalist>
+
+          <label>
+            Country:
+            <input
+              type="text"
+              value={route.country}
+              onChange={(e) => setRoute({ ...route, country: e.target.value })}
+              list="country-list"
+            />
+          </label>
+          <datalist id="country-list">
+            {Array.from(new Set(allRoutes.map((r) => r.country)))
+              .filter(Boolean)
+              .map((c, index) => (
+                <option key={index} value={c} />
+              ))}
+          </datalist>
+
+          <div className="left-button-group">
+            <button onClick={handleSaveRoute}>Next</button>
+            <button onClick={() => navigate("/")}>Cancel</button>
+          </div>
         </div>
-      </div>      
       ) : (
         <div>
           <h3>Comparisons for {route.name}</h3>
