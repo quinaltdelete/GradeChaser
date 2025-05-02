@@ -18,8 +18,9 @@ function AddRoutePage({ setPage }) {
   const [comparison, setComparison] = useState({ easier: "", harder: "" });
   const [allRoutes, setAllRoutes] = useState([]);
   const [savedComparisons, setSavedComparisons] = useState([]);
+  const [saving, setSaving] = useState(false);
 
-  /* ────────────────────────── Fetch all routes ────────────────────────── */
+  // Fetch all routes.
   useEffect(() => {
     fetch(`/api/routes`)
       .then((response) => response.json())
@@ -138,7 +139,6 @@ function AddRoutePage({ setPage }) {
     }
   };
 
-  /* ───────────────────────────── JSX MARKUP ───────────────────────────── */
   return (
     <div className="container">
       <h2>Rank a Route</h2>
@@ -275,22 +275,22 @@ function AddRoutePage({ setPage }) {
             </div>
           )}
 
-          <div className="left-button-group">
-            <button
-              onClick={async () => {
-                try {
-                  await fetch(`/api/recalculate-ranks`, { method: "POST" });
-                } catch (error) {
-                  console.error("Error recalculating grades:", error);
-                } finally {
-                  navigate("/");
-                  window.location.reload();
-                }
-              }}
-            >
-              Done
-            </button>
-          </div>
+          <button
+            disabled={saving}
+            onClick={async () => {
+              setSaving(true);
+              try {
+                await fetch(`/api/recalculate-ranks`, { method: "POST" });
+              } catch (error) {
+                console.error("Error recalculating grades:", error);
+              } finally {
+                navigate("/");
+                window.location.reload();
+              }
+            }}
+          >
+            {saving ? "Saving..." : "Done"}
+          </button>
         </div>
       )}
     </div>
