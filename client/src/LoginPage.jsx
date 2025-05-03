@@ -21,7 +21,6 @@ function LoginPage({ setUser }) {
       if (!response.ok) {
         setError(data.error || 'Login failed');
       } else {
-        // Save the token (and user info) for later authenticated requests.
         localStorage.setItem('token', data.token);
         setUser(data.user);
         navigate('/');
@@ -34,16 +33,17 @@ function LoginPage({ setUser }) {
 
   return (
     <div className="container">
-      <h2>Login</h2>
-
       <div className="login-box">
-        <form onSubmit={handleLogin}>
+        <h2>Login</h2>
+        <br></br>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <form onSubmit={handleSubmit}>
           <label>
             Username:
             <input
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={e => setUsername(e.target.value)}
               required
             />
           </label>
@@ -53,7 +53,7 @@ function LoginPage({ setUser }) {
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
             />
           </label>
@@ -63,10 +63,10 @@ function LoginPage({ setUser }) {
 
         <div className="login-links">
           <p>
-            Forgot your password? <a href="/reset-password">Reset it here</a>
+            Forgot your password? <Link to="/forgot-password">Reset it here</Link>
           </p>
           <p>
-            Don't have an account? <a href="/signup">Sign up</a>
+            Don't have an account? <Link to="/signup">Sign up</Link>
           </p>
         </div>
       </div>

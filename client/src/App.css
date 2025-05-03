@@ -542,7 +542,6 @@ th {
   display: flex;
   flex-direction: column;
   font-weight: 500;
-  margin-bottom: 0.5rem;
 }
 
 .login-box input {
