@@ -35,36 +35,41 @@ function LoginPage({ setUser }) {
   return (
     <div className="container">
       <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input
-            type="text"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Forgot your password? <Link to="/forgot-password">Reset it here</Link>
-      </p>
-      <p>
-        Don't have an account? <Link to="/signup">Sign up</Link>
-      </p>
+
+      <div className="login-box">
+        <form onSubmit={handleLogin}>
+          <label>
+            Username:
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </label>
+
+          <label>
+            Password:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          <button type="submit">Login</button>
+        </form>
+
+        <div className="login-links">
+          <p>
+            Forgot your password? <a href="/reset-password">Reset it here</a>
+          </p>
+          <p>
+            Don't have an account? <a href="/signup">Sign up</a>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
