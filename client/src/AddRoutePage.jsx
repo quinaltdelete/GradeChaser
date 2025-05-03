@@ -224,7 +224,7 @@ function AddRoutePage({ setPage }) {
 
           <div className="comparison-entry">
             <label>
-              Enter a route that's harder than {route.name}:
+              Enter a route that's harder than {route.name}: 
               <input
                 type="text"
                 name="harder"
@@ -245,7 +245,7 @@ function AddRoutePage({ setPage }) {
 
           <div className="comparison-entry">
             <label>
-              Enter a route that's easier than {route.name}:
+              Enter a route that's easier than {route.name}: 
               <input
                 type="text"
                 name="easier"
