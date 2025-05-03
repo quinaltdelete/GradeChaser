@@ -142,7 +142,7 @@ function AddRoutePage({ setPage }) {
   return (
     <div className="container">
       <h2>Rank a Route</h2>
-
+  
       {!routeSaved ? (
         <div className="form-block">
           <label>
@@ -159,7 +159,7 @@ function AddRoutePage({ setPage }) {
               <option key={r.id || index} value={r.name} />
             ))}
           </datalist>
-
+  
           <label>
             Area:
             <input
@@ -176,7 +176,7 @@ function AddRoutePage({ setPage }) {
                 <option key={index} value={a} />
               ))}
           </datalist>
-
+  
           <label>
             Sub-Area:
             <input
@@ -195,7 +195,7 @@ function AddRoutePage({ setPage }) {
                 <option key={index} value={s} />
               ))}
           </datalist>
-
+  
           <label>
             Country:
             <input
@@ -212,7 +212,7 @@ function AddRoutePage({ setPage }) {
                 <option key={index} value={c} />
               ))}
           </datalist>
-
+  
           <div className="left-button-group">
             <button onClick={handleSaveRoute}>Next</button>
             <button onClick={() => navigate("/")}>Cancel</button>
@@ -221,60 +221,64 @@ function AddRoutePage({ setPage }) {
       ) : (
         <div>
           <h3>Comparisons for {route.name}</h3>
-
-          <div className="comparison-entry">
-            <label>
-              Enter a route that's harder than {route.name}: 
-              <input
-                type="text"
-                name="harder"
-                value={comparison.harder}
-                onChange={handleComparisonChange}
-                list="harder-route-options"
-              />
-            </label>
-            <datalist id="harder-route-options">
-              {allRoutes
-                .filter((r) => r.name !== route.name)
-                .map((r) => (
-                  <option key={r.id} value={r.name} />
-                ))}
-            </datalist>
-            <button onClick={() => saveComparison("harder")}>Enter</button>
-          </div>
-
-          <div className="comparison-entry">
-            <label>
-              Enter a route that's easier than {route.name}: 
-              <input
-                type="text"
-                name="easier"
-                value={comparison.easier}
-                onChange={handleComparisonChange}
-                list="easier-route-options"
-              />
-            </label>
-            <datalist id="easier-route-options">
-              {allRoutes
-                .filter((r) => r.name !== route.name)
-                .map((r) => (
-                  <option key={r.id} value={r.name} />
-                ))}
-            </datalist>
-            <button onClick={() => saveComparison("easier")}>Enter</button>
-          </div>
-
-          {savedComparisons.length > 0 && (
-            <div>
-              <h4>Your Comparisons:</h4>
-              <ul>
-                {savedComparisons.map((comparison, index) => (
-                  <li key={index}>{comparison}</li>
-                ))}
-              </ul>
+  
+          <div className="comparison-flex">
+            <div className="comparison-left">
+              <div className="comparison-entry">
+                <label>
+                  Enter a route that's harder than {route.name}:
+                  <input
+                    type="text"
+                    name="harder"
+                    value={comparison.harder}
+                    onChange={handleComparisonChange}
+                    list="harder-route-options"
+                  />
+                </label>
+                <datalist id="harder-route-options">
+                  {allRoutes
+                    .filter((r) => r.name !== route.name)
+                    .map((r) => (
+                      <option key={r.id} value={r.name} />
+                    ))}
+                </datalist>
+                <button onClick={() => saveComparison("harder")}>Enter</button>
+              </div>
+  
+              <div className="comparison-entry">
+                <label>
+                  Enter a route that's easier than {route.name}:
+                  <input
+                    type="text"
+                    name="easier"
+                    value={comparison.easier}
+                    onChange={handleComparisonChange}
+                    list="easier-route-options"
+                  />
+                </label>
+                <datalist id="easier-route-options">
+                  {allRoutes
+                    .filter((r) => r.name !== route.name)
+                    .map((r) => (
+                      <option key={r.id} value={r.name} />
+                    ))}
+                </datalist>
+                <button onClick={() => saveComparison("easier")}>Enter</button>
+              </div>
             </div>
-          )}
-
+  
+            {savedComparisons.length > 0 && (
+              <div className="comparison-right">
+                <h4>Your Comparisons:</h4>
+                <ul>
+                  {savedComparisons.map((comparison, index) => (
+                    <li key={index}>{comparison}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+  
           <button
             style={{ marginTop: "20px" }}
             disabled={saving}
@@ -295,7 +299,7 @@ function AddRoutePage({ setPage }) {
         </div>
       )}
     </div>
-  );
+  );  
 }
 
 export default AddRoutePage;

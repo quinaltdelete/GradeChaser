@@ -174,7 +174,6 @@ form select:focus {
   padding: 0;
   text-align: left;
   display: block;
-  margin-bottom: 32px;
 }
 .container input {
   margin-top: 4px;
@@ -322,6 +321,24 @@ th {
   margin-top: 10px;
 }
 
+.comparison-flex {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.comparison-left {
+  flex: 1 1 50%;
+}
+
+.comparison-right {
+  flex: 1 1 40%;
+  max-width: 400px;
+  padding: 0 10px;
+}
 
 /* ===== Other Misc Elements ===== */
 .logo {
