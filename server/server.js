@@ -291,7 +291,8 @@ app.get('/api/personal-ranking', authenticateToken, async (req, res) => {
 
     const rankedRoutes = routesResult.rows.map(route => ({
       ...route,
-      personal_score: eloScores[route.id]
+      personal_score: eloScores[route.id],
+      has_comparisons: true      
     }));
 
     rankedRoutes.sort((a, b) => b.personal_score - a.personal_score);
