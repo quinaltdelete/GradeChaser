@@ -6,7 +6,7 @@ const { Pool } = require('pg');
 const { exec } = require("child_process");
 const jwt = require('jsonwebtoken');
 const path = require("path");
-const calculateEloPersonal = require('./calculateEloRanks');
+const calculateEloPersonal = require('./calculateEloPersonal');
 
 const app = express();
 app.use(cors());
