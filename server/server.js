@@ -6,6 +6,7 @@ const { Pool } = require('pg');
 const { exec } = require("child_process");
 const jwt = require('jsonwebtoken');
 const path = require("path");
+const calculateEloPersonal = require('./calculateEloRanks');
 
 const app = express();
 app.use(cors());
@@ -277,105 +278,30 @@ app.delete('/api/delete-comparison/:id', async (req, res) => {
   }
 });
 
-// Bayesian personal ranking endpoint using a Bradley–Terry model.
-app.get('/api/personal-ranking-bayesian', authenticateToken, async (req, res) => {
+app.get('/api/personal-ranking', authenticateToken, async (req, res) => {
   const userId = req.user.id;
-  console.log("Personal ranking request from user ID:", userId);
   try {
-    // Get all comparisons (votes) made by this user.
-    const comparisonsResult = await pool.query(
-      `SELECT easier_route_id, harder_route_id
-       FROM user_votes
-       WHERE user_id = $1;`,
-      [userId]
-    );
-    const comparisons = comparisonsResult.rows;
-    
-    // Identify all unique route IDs that have been compared.
-    const routeIdsSet = new Set();
-    comparisons.forEach(comp => {
-      routeIdsSet.add(comp.easier_route_id);
-      routeIdsSet.add(comp.harder_route_id);
-    });
-    const routeIds = Array.from(routeIdsSet);
-    
-    // Initialize log-abilities (gamma) for each route to 0.
-    let gamma = {};
-    routeIds.forEach(id => {
-      gamma[id] = 0;
-    });
-    
-    // Set prior variance parameter.
-    const tau2 = 1.0;  // You can tune this value.
-    
-    // Set up gradient ascent parameters.
-    const learningRate = 0.01;
-    const maxIter = 1000;
-    
-    // Perform iterative updates to maximize the log-posterior.
-    for (let iter = 0; iter < maxIter; iter++) {
-      // Initialize gradients.
-      let gradients = {};
-      routeIds.forEach(id => {
-        gradients[id] = 0;
-      });
-      
-      // For each comparison where route i (harder) wins over route j (easier).
-      comparisons.forEach(({ harder_route_id, easier_route_id }) => {
-        const i = harder_route_id;
-        const j = easier_route_id;
-        const exp_i = Math.exp(gamma[i]);
-        const exp_j = Math.exp(gamma[j]);
-        const p_ij = exp_i / (exp_i + exp_j);
-        // For the winner (i), derivative is (1 - p_ij)
-        gradients[i] += (1 - p_ij);
-        // For the loser (j), derivative is (0 - p_ij) = -p_ij.
-        gradients[j] -= p_ij;
-      });
-      
-      // Add the derivative of the log-prior: -gamma_i/tau2 for each route.
-      routeIds.forEach(id => {
-        gradients[id] -= gamma[id] / tau2;
-      });
-      
-      // Update gamma values and track maximum change for convergence.
-      let maxChange = 0;
-      routeIds.forEach(id => {
-        const change = learningRate * gradients[id];
-        gamma[id] += change;
-        maxChange = Math.max(maxChange, Math.abs(change));
-      });
-      
-      // Stop if updates are very small.
-      if (maxChange < 1e-6) break;
-    }
-    
-    // Transform gamma to a positive score. Here we exponentiate so that higher gamma yields a higher score.
-    let scores = {};
-    routeIds.forEach(id => {
-      scores[id] = Math.exp(gamma[id]);
-    });
-    
-    // Retrieve route details and attach the computed personal score.
-    console.log("Route IDs used for personal ranking:", routeIds);
+    const eloScores = await calculateEloPersonal(userId);
+    const routeIds = Object.keys(eloScores).map(id => parseInt(id));
+
     const routesResult = await pool.query(
       'SELECT * FROM routes WHERE id = ANY($1::int[])',
       [routeIds]
     );
-    let personalRankings = routesResult.rows.map(route => ({
+
+    const rankedRoutes = routesResult.rows.map(route => ({
       ...route,
-      personal_score: scores[route.id]
+      personal_score: eloScores[route.id]
     }));
-    
-    // Sort the routes by personal_score descending.
-    personalRankings.sort((a, b) => b.personal_score - a.personal_score);
-    
-    res.json(personalRankings);
+
+    rankedRoutes.sort((a, b) => b.personal_score - a.personal_score);
+    res.json(rankedRoutes);
   } catch (err) {
-    console.error("Error calculating Bayesian personal rankings:", err);
-    res.status(500).json({ error: "Database query failed" });
+    console.error("Error fetching Elo personal ranking:", err);
+    res.status(500).json({ error: "Failed to compute personal ranking" });
   }
 });
+
 
 // Trigger a recalculation of the global rankings.
 app.post("/api/recalculate-ranks", async (req, res) => {
