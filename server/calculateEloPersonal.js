@@ -41,8 +41,6 @@ async function calculateEloPersonal(userId) {
   } catch (err) {
     console.error("Error calculating ELO rankings:", err);
     return {};
-  } finally {
-    pool.end();
   }
 }
 
