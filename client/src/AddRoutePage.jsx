@@ -281,20 +281,13 @@ function AddRoutePage({ setPage }) {
   
           <button
             style={{ marginTop: "20px" }}
-            disabled={saving}
             onClick={async () => {
-              setSaving(true);
-              try {
-                await fetch(`/api/recalculate-ranks`, { method: "POST" });
-              } catch (error) {
-                console.error("Error recalculating grades:", error);
-              } finally {
-                navigate("/");
-                window.location.reload();
-              }
+              fetch("/api/recalculate-ranks", { method: "POST" }).catch(err => console.error("Could not start re-calc:", err));
+
+              navigate("/");
             }}
           >
-            {saving ? "Saving..." : "Done"}
+            "Done"
           </button>
         </div>
       )}

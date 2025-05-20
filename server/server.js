@@ -7,6 +7,7 @@ const { exec } = require("child_process");
 const jwt = require('jsonwebtoken');
 const path = require("path");
 const calculateEloPersonal = require('./calculateEloPersonal');
+const { spawn } = require("child_process");
 
 const app = express();
 app.use(cors());
@@ -303,25 +304,21 @@ app.get('/api/personal-ranking', authenticateToken, async (req, res) => {
   }
 });
 
-
 // Trigger a recalculation of the global rankings.
 app.post("/api/recalculate-ranks", async (req, res) => {
-  try {
-    exec("node server/calculateRanks.js", (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error running calculateRanks.js: ${error.message}`);
-        return res.status(500).json({ error: "Failed to recalculate ranks" });
-      }
-      if (stderr) {
-        console.error(`calculateRanks.js stderr: ${stderr}`);
-      }
-      console.log(`calculateRanks.js output: ${stdout}`);
-      res.json({ message: "Ranks recalculated successfully" });
-    });
-  } catch (err) {
-    console.error("Error triggering rank calculation:", err);
-    res.status(500).json({ error: "Server error" });
-  }
+  res.status(202).json({ message: "Re-calculation started" });
+
+  // Kick off the calculate ranks task after the response is flushed.
+  const child = spawn("node", ["server/calculateRanks.js"], {
+    stdio: ["ignore", "inherit", "inherit"], 
+    detached: true                          
+  });
+
+  // Detach so the parent (web server) isn’t blocked
+  child.unref();
+
+  child.on("error",  err  => console.error("Rank script error:", err));
+  child.on("close", code => console.log(`Rank script finished with code ${code}`));
 });
 
 // Catch-all route for React Router
