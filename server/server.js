@@ -61,7 +61,7 @@ app.get('/api/routes', async (req, res) => {
         r.estimated_v_grade,
         COALESCE(r.certainty_score, 0) AS certainty_score,
         COALESCE(c.num_comparisons, 0) AS num_comparisons,
-        (COALESCE(c.num_comparisons, 0) >)::int AS has_comparisons
+        COALESCE(c.num_comparisons, 0) > 0 AS has_comparisons
       FROM routes r
       LEFT JOIN (
         SELECT route_id, COUNT(*) AS num_comparisons
