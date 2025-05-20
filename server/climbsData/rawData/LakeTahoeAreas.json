@@ -1,0 +1,290 @@
+{
+  "data": {
+    "area": {
+      "area_name": "Lake Tahoe",
+      "children": [
+        {
+          "area_name": "Carson Pass Highway (88)",
+          "children": [
+            {
+              "area_name": "Woods Lake"
+            },
+            {
+              "area_name": "Whale Shark boulder"
+            },
+            {
+              "area_name": "Upper Bear River Reservoir"
+            },
+            {
+              "area_name": "Woodfords Canyon"
+            },
+            {
+              "area_name": "Pickett's Junction boulders"
+            },
+            {
+              "area_name": "Miess Boulders"
+            },
+            {
+              "area_name": "Silver Lake"
+            },
+            {
+              "area_name": "Mokelumne Wilderness"
+            },
+            {
+              "area_name": "Tanglefoot Boulders"
+            },
+            {
+              "area_name": "Kirkwood Lake"
+            },
+            {
+              "area_name": "Caples Lake"
+            },
+            {
+              "area_name": "Lake Margaret"
+            },
+            {
+              "area_name": "Calaveras Domes"
+            },
+            {
+              "area_name": "Crater Lake"
+            },
+            {
+              "area_name": "Erratica"
+            },
+            {
+              "area_name": "CA88 - West (aka the Spot)"
+            }
+          ]
+        },
+        {
+          "area_name": "South Shore",
+          "children": [
+            {
+              "area_name": "Wonderland, The"
+            },
+            {
+              "area_name": "Tahoe Mountain Road"
+            },
+            {
+              "area_name": "Show of Force"
+            },
+            {
+              "area_name": "Rolling Thunder"
+            },
+            {
+              "area_name": "Projectile, The"
+            },
+            {
+              "area_name": "Old School Area"
+            },
+            {
+              "area_name": "Off Road Area"
+            },
+            {
+              "area_name": "Mtn. Beavers"
+            },
+            {
+              "area_name": "Luther Rock"
+            },
+            {
+              "area_name": "Luther Spires"
+            },
+            {
+              "area_name": "Meyers Area"
+            },
+            {
+              "area_name": "Mount Tallac"
+            },
+            {
+              "area_name": "Pie Shop, The"
+            },
+            {
+              "area_name": "Trimmer Area"
+            },
+            {
+              "area_name": "Luther Boulders, The"
+            },
+            {
+              "area_name": "Lake Audrain"
+            },
+            {
+              "area_name": "Jobs Peak"
+            },
+            {
+              "area_name": "Hidetaka's Hideout"
+            },
+            {
+              "area_name": "Jobs Peak Bouldering"
+            },
+            {
+              "area_name": "Fat Tire Boulder"
+            },
+            {
+              "area_name": "Dirty Boulders"
+            },
+            {
+              "area_name": "Bob's Rock"
+            },
+            {
+              "area_name": "Benwood Meadows"
+            },
+            {
+              "area_name": "Armstrong Pass"
+            },
+            {
+              "area_name": "Beavers, The"
+            },
+            {
+              "area_name": "Arena, The"
+            }
+          ]
+        },
+        {
+          "area_name": "Highway 50 Corridor",
+          "children": [
+            {
+              "area_name": "Wright's Lake Road Boulders"
+            },
+            {
+              "area_name": "Sugar Spires"
+            },
+            {
+              "area_name": "Sugarloaf Area"
+            },
+            {
+              "area_name": "Wrights Lake"
+            },
+            {
+              "area_name": "Phantom Spires"
+            },
+            {
+              "area_name": "Placerville"
+            },
+            {
+              "area_name": "Secrets, The"
+            },
+            {
+              "area_name": "Slick Rock Dome"
+            },
+            {
+              "area_name": "Pyramid Creek / Horsetail Falls"
+            },
+            {
+              "area_name": "Eagle Rock"
+            },
+            {
+              "area_name": "Desolation Wilderness"
+            },
+            {
+              "area_name": "Ice House Boulders"
+            },
+            {
+              "area_name": "Folsom"
+            },
+            {
+              "area_name": "Lover's Leap"
+            },
+            {
+              "area_name": "Echo Summit"
+            },
+            {
+              "area_name": "Desolation Wilderness Bouldering"
+            },
+            {
+              "area_name": "Loon Lake"
+            },
+            {
+              "area_name": "31 Milestone Tract"
+            }
+          ]
+        },
+        {
+          "area_name": "I-80 Corridor",
+          "children": [
+            {
+              "area_name": "Warren Lake"
+            },
+            {
+              "area_name": "Rocklin (Deer Creek Park)"
+            },
+            {
+              "area_name": "Indian Springs"
+            },
+            {
+              "area_name": "Rainbow"
+            },
+            {
+              "area_name": "Hobo Crag, The"
+            },
+            {
+              "area_name": "Bowman/Emeralds"
+            },
+            {
+              "area_name": "Donner Summit"
+            },
+            {
+              "area_name": "Donner/Truckee Bouldering"
+            },
+            {
+              "area_name": "Auburn and Grass Valley"
+            }
+          ]
+        },
+        {
+          "area_name": "West Shore",
+          "children": [
+            {
+              "area_name": "Meeks Bay Trail"
+            },
+            {
+              "area_name": "Indian Rock"
+            },
+            {
+              "area_name": "Eagle Rock"
+            },
+            {
+              "area_name": "Cascade Cliff"
+            },
+            {
+              "area_name": "Eagle Creek Canyon"
+            },
+            {
+              "area_name": "Bliss"
+            }
+          ]
+        },
+        {
+          "area_name": "Truckee River Canyon",
+          "children": [
+            {
+              "area_name": "Twin Crags"
+            },
+            {
+              "area_name": "Deep Creek Crags"
+            },
+            {
+              "area_name": "Shirley Canyon Cliffs"
+            },
+            {
+              "area_name": "Big Chief"
+            }
+          ]
+        },
+        {
+          "area_name": "Ebbets Pass Highway (4)",
+          "children": [
+            {
+              "area_name": "True Value Crag"
+            },
+            {
+              "area_name": "Ronin Boulder"
+            },
+            {
+              "area_name": "Bear Valley"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

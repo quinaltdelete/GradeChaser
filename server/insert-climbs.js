@@ -8,13 +8,18 @@ const path = require('path');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false, 
   },
 });
 
 async function main() {
   try {
-    const filePath = path.join(__dirname, 'cleaned-buttermilk-climbs.json');
+    const filePath = path.join(__dirname, 'climbsData/cleanedData/cleaned-tuolumne-climbs.json');
+
+if (!fs.existsSync(filePath)) {
+  console.error(`File not found: ${filePath}`);
+  process.exit(1);
+}
     const jsonData = fs.readFileSync(filePath, 'utf-8');
     const climbs = JSON.parse(jsonData);
 

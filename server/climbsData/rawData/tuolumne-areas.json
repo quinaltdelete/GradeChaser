@@ -1,0 +1,78 @@
+{
+  "data": {
+    "area": {
+      "area_name": "* Tuolumne Bouldering",
+      "children": [
+        {
+          "area_name": "Tenaya West Boulders"
+        },
+        {
+          "area_name": "Tank Boulder"
+        },
+        {
+          "area_name": "Yosemite Creek"
+        },
+        {
+          "area_name": "Sunrise Boulder"
+        },
+        {
+          "area_name": "Tenaya East Boulders"
+        },
+        {
+          "area_name": "White Mountain West Side Boulder Field"
+        },
+        {
+          "area_name": "May Lake - Battle Tanks"
+        },
+        {
+          "area_name": "Pennyroyal Boulders"
+        },
+        {
+          "area_name": "Puppy Boulders"
+        },
+        {
+          "area_name": "Pywiack Boulders"
+        },
+        {
+          "area_name": "Raisin Creek"
+        },
+        {
+          "area_name": "Ridge Top Boulders"
+        },
+        {
+          "area_name": "Knobs, The"
+        },
+        {
+          "area_name": "Medlicott Boulders"
+        },
+        {
+          "area_name": "Olmsted Canyon Boulders"
+        },
+        {
+          "area_name": "Olmsted Point Boulders"
+        },
+        {
+          "area_name": "Tenaya Lake Boulders"
+        },
+        {
+          "area_name": "Cathedral Boulders"
+        },
+        {
+          "area_name": "Drug Dome Boulders"
+        },
+        {
+          "area_name": "Drug Dome Trees"
+        },
+        {
+          "area_name": "Gunks, The"
+        },
+        {
+          "area_name": "Kitty Boulders"
+        },
+        {
+          "area_name": "Campground Boulder 1"
+        }
+      ]
+    }
+  }
+}

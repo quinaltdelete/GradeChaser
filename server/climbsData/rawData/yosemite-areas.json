@@ -1,0 +1,90 @@
+{
+  "data": {
+    "area": {
+      "area_name": "* Yosemite Valley Bouldering",
+      "children": [
+        {
+          "area_name": "Yabo Area"
+        },
+        {
+          "area_name": "Wood Yard"
+        },
+        {
+          "area_name": "Turtleback Dome"
+        },
+        {
+          "area_name": "Presidential Boulder"
+        },
+        {
+          "area_name": "Northside Road Trail Bouldering"
+        },
+        {
+          "area_name": "MSG Boulder"
+        },
+        {
+          "area_name": "Lower Cathedral Boulders"
+        },
+        {
+          "area_name": "Swan Slab Boulders"
+        },
+        {
+          "area_name": "Wave Boulders, The"
+        },
+        {
+          "area_name": "Gunsight Boulders"
+        },
+        {
+          "area_name": "Horse Trail Boulders"
+        },
+        {
+          "area_name": "Housekeeping"
+        },
+        {
+          "area_name": "HWY 140"
+        },
+        {
+          "area_name": "Indian Creek Boulders"
+        },
+        {
+          "area_name": "Intersection Boulders"
+        },
+        {
+          "area_name": "Lost Boulders"
+        },
+        {
+          "area_name": "Manure Pile Boulders"
+        },
+        {
+          "area_name": "Mist Trail Boulders"
+        },
+        {
+          "area_name": "Sentinel Boulders"
+        },
+        {
+          "area_name": "Ahwahnee Boulders"
+        },
+        {
+          "area_name": "Boulder Lane"
+        },
+        {
+          "area_name": "Bridalveil Boulders"
+        },
+        {
+          "area_name": "Camp 4 Boulders"
+        },
+        {
+          "area_name": "Candyland Boulders"
+        },
+        {
+          "area_name": "Cathedral Boulders"
+        },
+        {
+          "area_name": "Crystals, The"
+        },
+        {
+          "area_name": "Curry Village"
+        }
+      ]
+    }
+  }
+}

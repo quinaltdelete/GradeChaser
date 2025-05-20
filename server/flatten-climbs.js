@@ -1,25 +1,33 @@
 import fs from 'fs';
 
 // Read your original JSON data
-const data = JSON.parse(fs.readFileSync('buttermilk-climbs.json', 'utf-8'));
+const data = JSON.parse(fs.readFileSync('./server/climbsData/rawData/tuolumne-climbs.json', 'utf-8'));
 
 // Zones you defined and want to use
 const validZones = [
-  "Buttermilks Main", 
-  "Dale's Camp", 
-  "Bardini", 
-  "Pollen Grains", 
-  "Beehive",
-  "Checkerboard",
-  "Sherman Acres",
-  "Hall of Mirrors",
-  "Get Carter Boulder",
-  "Solitaire Boulder",
-  "Sexy Bloc, The",
-  "Possibly Disasterous",
-  "Heaven",
-  "Painted Cave Area",
-  "Glass House, The"
+  "Tenaya West Boulders",
+  "Tank Boulder",
+  "Yosemite Creek",
+  "Sunrise Boulder",
+  "Tenaya East Boulders",
+  "White Mountain West Side Boulder Field",
+  "May Lake - Battle Tanks",
+  "Pennyroyal Boulders",
+  "Puppy Boulders",
+  "Pywiack Boulders",
+  "Raisin Creek",
+  "Ridge Top Boulders",
+  "Knobs, The",
+  "Medlicott Boulders",
+  "Olmsted Canyon Boulders",
+  "Olmsted Point Boulders",
+  "Tenaya Lake Boulders",
+  "Cathedral Boulders",
+  "Drug Dome Boulders",
+  "Drug Dome Trees",
+  "Gunks, The",
+  "Kitty Boulders",
+  "Campground Boulder 1"
 ];
 
 // Flatten the climbs recursively
@@ -33,12 +41,14 @@ function extractClimbs(node, currentZone = null) {
 
   if (node.climbs?.length) {
     node.climbs.forEach(climb => {
-      flattened.push({
-        name: climb.name,
-        area: "Bishop",
-        zone: currentZone || "Other",
-        vGrade: climb.grades?.vscale || "–"
-      });
+      if (climb.grades?.vscale !== null) {
+        flattened.push({
+          name: climb.name,
+          area: "Tuolumne",
+          zone: currentZone || "Other",
+          vGrade: climb.grades?.vscale || "–"
+        });
+      }
     });
   }
 
@@ -51,5 +61,5 @@ function extractClimbs(node, currentZone = null) {
 extractClimbs(data.data.area);
 
 // Save to file
-fs.writeFileSync('cleaned-buttermilk-climbs.json', JSON.stringify(flattened, null, 2));
-console.log('Cleaned JSON saved to cleaned-buttermilk-climbs.json');
+fs.writeFileSync('cleaned-tuolumne-climbs.json', JSON.stringify(flattened, null, 2));
+console.log('Cleaned JSON saved to cleaned-tuolumne-climbs.json');
