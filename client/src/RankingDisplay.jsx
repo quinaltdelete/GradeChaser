@@ -185,7 +185,10 @@ function RankingDisplay({ routes }) {
           <input
             type="checkbox"
             checked={showUnranked}
-            onChange={() => setShowUnranked(prev => !prev)}
+            onChange={() => {
+              setShowUnranked(prev => !prev);
+              setCurrentPage(0);
+            }}
           />
           Show unranked climbs
         </label>
