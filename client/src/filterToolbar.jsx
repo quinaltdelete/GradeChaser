@@ -36,7 +36,7 @@ function FilterToolbar({ routes, onFilterChange }) {
     if (rank) jumpFilters.rank = rank;
 
     // Compute updated filters.
-    const updatedFilters = { ...appliedFilters, ...refinementFilters, showUnranked };
+    const updatedFilters = { ...appliedFilters, ...refinementFilters};
 
     // Update local state and notify parent.
     setAppliedFilters(updatedFilters);

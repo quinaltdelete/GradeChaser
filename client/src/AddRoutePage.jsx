@@ -61,7 +61,6 @@ function AddRoutePage({ setPage }) {
     }
   }, [route.name, allRoutes]);
 
-  /* ────────────────────────────── CHANGED HANDLER ────────────────────────────── */
   const handleNameChange = (e) => {
     // Clear the other fields so stale values don’t linger while typing a new route name
     setRoute({
@@ -71,7 +70,7 @@ function AddRoutePage({ setPage }) {
       sub_area: "",
       country: "",
     });
-    setRouteSaved(false); // user is editing again
+    setRouteSaved(false);
   };
 
   const handleComparisonChange = (e) => {
@@ -283,7 +282,6 @@ function AddRoutePage({ setPage }) {
             style={{ marginTop: "20px" }}
             onClick={async () => {
               fetch("/api/recalculate-ranks", { method: "POST" }).catch(err => console.error("Could not start re-calc:", err));
-
               navigate("/");
             }}
           >
