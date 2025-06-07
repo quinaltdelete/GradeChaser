@@ -1,25 +1,30 @@
-require('dotenv').config();
-const { Pool } = require('pg');
+require("dotenv").config();
+const { Pool } = require("pg");
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, 
-  ssl: {
-    rejectUnauthorized: false
-  }
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
-const ITERATIONS = 200;
-const INITIAL_SCORE = 1000;
+const ITERATIONS     = 200;
+const INITIAL_SCORE  = 1000;
+
+/* ─── certainty parameters ─────────────────────────────────────── */
+const TAU1 = 20;            // ~number of votes to reach 63 % of max volume
+const ALPHA = 0.40;          // weight of coverage
+const BETA = 0.30;           // weight of vote volume
+const GAMMA = 0.30;          // weight of opponent diversity
+/* α + β + γ must sum to 1                                        */
 
 async function calculateBradleyTerryRanks() {
   try {
-    console.log("Fetching data...");
+    console.log("Fetching data…");
 
+    /* ─── routes & comparisons ─────────────────────────────────── */
     const routesResult = await pool.query("SELECT id FROM routes;");
-    const routes = routesResult.rows.map(row => row.id);
+    const routes = routesResult.rows.map((row) => row.id);         // [id]
 
-    let strengths = {};
-    routes.forEach(id => strengths[id] = INITIAL_SCORE);
+    const strengths = Object.fromEntries(routes.map((id) => [id, INITIAL_SCORE]));
 
     const edgesResult = await pool.query(`
       SELECT harder_route_id, easier_route_id, weight
@@ -27,78 +32,81 @@ async function calculateBradleyTerryRanks() {
     `);
     const comparisons = edgesResult.rows;
 
-    // Build adjacency for each route
-    let adjacency = {};
-    routes.forEach((routeId) => {
-      adjacency[routeId] = new Set();
+    /* ─── prepare adjacency  (for coverage) ────────────────────── */
+    const adjacency  = {};              // harder → easier
+    const adjacencyR = {};              // easier → harder
+    routes.forEach((id) => { adjacency[id] = new Set(); adjacencyR[id] = new Set(); });
+
+    comparisons.forEach(({ harder_route_id: h, easier_route_id: e }) => {
+      adjacency[h].add(e);
+      adjacencyR[e].add(h);
     });
 
-    for (const { harder_route_id, easier_route_id } of comparisons) {
-      // Add an edge from the harder route to the easier route
-      adjacency[harder_route_id].add(easier_route_id);
-    }
-    
-    // Build the reversed adjacency as well (easier → harder)
-    let adjacencyReversed = {};
-    routes.forEach((id) => {
-      adjacencyReversed[id] = new Set();
+    /* ─── vote volume & unique opponents (for boosters) ────────── */
+    const counts = {}; 
+    routes.forEach((id) => (counts[id] = { votes: 0, opps: new Set() }));
+
+    comparisons.forEach(({ harder_route_id: h, easier_route_id: e, weight }) => {
+      counts[h].votes += weight;
+      counts[e].votes += weight;
+      counts[h].opps.add(e);
+      counts[e].opps.add(h);
     });
-    for (const { harder_route_id, easier_route_id } of comparisons) {
-      adjacencyReversed[easier_route_id].add(harder_route_id);
-    }
-    
-    // allDescendants[r] = all routes that "r" can reach (r is harder than them).
-    // allAncestors[r]   = all routes that can reach "r" (i.e., all routes that are harder than r).
-    let allDescendants = {};
-    let allAncestors = {};
-    
+
+    /* ─── coverage via BFS per route ───────────────────────────── */
+    const allDesc  = {};
+    const allAnc   = {};
+
     for (const r of routes) {
-      // -----------------
-      // Descendants BFS
-      // -----------------
-      const visited = new Set();
-      const queue = [r];  // start from route r
-      while (queue.length > 0) {
-        const current = queue.shift();
-        // For every route that current is harder than:
-        for (const neighbor of adjacency[current]) {
-          if (!visited.has(neighbor) && neighbor !== r) {
-            visited.add(neighbor);
-            queue.push(neighbor);
-          }
-        }
+      // descendants (r is harder than …)
+      const visD = new Set();
+      const qD   = [r];
+      while (qD.length) {
+        const cur = qD.shift();
+        adjacency[cur].forEach((nbr) => {
+          if (nbr !== r && !visD.has(nbr)) { visD.add(nbr); qD.push(nbr); }
+        });
       }
-      // Now "visited" is the set of all routes we can reach from r
-      allDescendants[r] = visited;
-    
-      // -----------------
-      // Ancestors BFS
-      // -----------------
-      const visitedAnc = new Set();
-      const queueAnc = [r];
-      while (queueAnc.length > 0) {
-        const current = queueAnc.shift();
-        // For every route that is harder than current:
-        for (const neighbor of adjacencyReversed[current]) {
-          if (!visitedAnc.has(neighbor) && neighbor !== r) {
-            visitedAnc.add(neighbor);
-            queueAnc.push(neighbor);
-          }
-        }
+      allDesc[r] = visD;
+
+      // ancestors (… harder than r)
+      const visA = new Set();
+      const qA   = [r];
+      while (qA.length) {
+        const cur = qA.shift();
+        adjacencyR[cur].forEach((nbr) => {
+          if (nbr !== r && !visA.has(nbr)) { visA.add(nbr); qA.push(nbr); }
+        });
       }
-      allAncestors[r] = visitedAnc;
+      allAnc[r] = visA;
     }
 
-    let certaintyScores = {};
-    for (const r of routes) {
-      const ancestorSet = allAncestors[r];
-      const descendantSet = allDescendants[r];
-      const unionSet = new Set([...ancestorSet, ...descendantSet]); 
-      const coverage = unionSet.size / (routes.length - 1);
+    /* ─── certainty calculation ───────────────────────────────── */
+    const certaintyScores = {};
 
-      certaintyScores[r] = coverage * 100;    
-    }
-    
+    routes.forEach((r) => {
+      /* 1. coverage ------------------------------------------------ */
+      const reachable = new Set([...allDesc[r], ...allAnc[r]]).size;
+      const coverage  = reachable / (routes.length - 1);            // 0 … 1
+
+      /* 2. vote volume -------------------------------------------- */
+      const nVotes = counts[r].votes;                               // integer
+      const volume = 1 - Math.exp(-nVotes / TAU1);                  // saturating 0 … 1
+
+      /* 3. opponent diversity ------------------------------------- */
+      const nOpp   = counts[r].opps.size;
+      const diversity = nOpp / (routes.length - 1);                 // 0 … 1
+
+      /* 4. blended certainty -------------------------------------- */
+      const blended =
+        ALPHA * coverage +
+        BETA  * volume   +
+        GAMMA * diversity;
+
+      certaintyScores[r] = Math.min(100, (blended * 100).toFixed(1));
+    });
+
+    /* persist certainty ------------------------------------------- */
     for (const r of routes) {
       await pool.query(
         "UPDATE routes SET certainty_score = $1 WHERE id = $2;",
@@ -106,86 +114,78 @@ async function calculateBradleyTerryRanks() {
       );
     }
 
-
-    console.log(`Ranking ${routes.length} routes based on ${comparisons.length} comparisons using Bradley–Terry model...`);
+    /* ─── Bradley–Terry iterations (unchanged) ──────────────────── */
+    console.log(
+      `Ranking ${routes.length} routes based on ${comparisons.length} comparisons…`
+    );
 
     for (let iter = 0; iter < ITERATIONS; iter++) {
-      let strengthUpdates = {};
-      routes.forEach(id => strengthUpdates[id] = 0);
+      const delta = Object.fromEntries(routes.map((id) => [id, 0]));
 
-      comparisons.forEach(({ harder_route_id, easier_route_id, weight }) => {
-        const s_harder = strengths[harder_route_id];
-        const s_easier = strengths[easier_route_id];
-
-        const prob_harder = s_harder / (s_harder + s_easier);
-        const prob_easier = s_easier / (s_harder + s_easier);
-
-        strengthUpdates[harder_route_id] += weight * (1 - prob_harder);
-        strengthUpdates[easier_route_id] += weight * (0 - prob_easier);
+      comparisons.forEach(({ harder_route_id: h, easier_route_id: e, weight }) => {
+        const sH = strengths[h];
+        const sE = strengths[e];
+        const denom = sH + sE;
+        delta[h] += weight * (1 - sH / denom);
+        delta[e] += weight * (0 - sE / denom);
       });
 
-      routes.forEach(id => {
-        strengths[id] += strengthUpdates[id];
-        if (strengths[id] < 1) strengths[id] = 1;
+      routes.forEach((id) => {
+        strengths[id] = Math.max(1, strengths[id] + delta[id]);
       });
     }
 
+    /* normalise to 0-1000 ----------------------------------------- */
     const maxStrength = Math.max(...Object.values(strengths));
-    routes.forEach(id => strengths[id] = (strengths[id] / maxStrength) * 1000);
+    routes.forEach((id) => (strengths[id] = (strengths[id] / maxStrength) * 1000));
 
-    // After ranks are calculated and before updating database:
+    /* rank list --------------------------------------------------- */
     const sortedRoutes = routes
-    .map(id => ({ id, rank: strengths[id] }))
-    .sort((a, b) => a.rank - b.rank); // sorted ascending (easiest to hardest)
+      .map((id) => ({ id, rank: strengths[id] }))
+      .sort((a, b) => a.rank - b.rank);
 
-    const totalRoutes = sortedRoutes.length;
-
-    function assignVGrade(percentile) {
-    if (percentile <= 30) return 'V0';
-    if (percentile <= 45) return 'V1';
-    if (percentile <= 58) return 'V2';
-    if (percentile <= 68) return 'V3';
-    if (percentile <= 76) return 'V4';
-    if (percentile <= 82) return 'V5';
-    if (percentile <= 87) return 'V6';
-    if (percentile <= 91) return 'V7';
-    if (percentile <= 94) return 'V8';
-    if (percentile <= 96) return 'V9';
-    if (percentile <= 97.5) return 'V10';
-    if (percentile <= 98.5) return 'V11';
-    if (percentile <= 99.2) return 'V12';
-    if (percentile <= 99.5) return 'V13';
-    if (percentile <= 99.7) return 'V14';
-    if (percentile <= 99.8) return "V15";
-    if (percentile <= 99.9) return "V16";
-    return 'V17';
+    /* assign V-grades --------------------------------- */
+    const total = sortedRoutes.length;
+    function vGrade(p) {
+      if (p <= 30) return "V0";
+      if (p <= 45) return "V1";
+      if (p <= 58) return "V2";
+      if (p <= 68) return "V3";
+      if (p <= 76) return "V4";
+      if (p <= 82) return "V5";
+      if (p <= 87) return "V6";
+      if (p <= 91) return "V7";
+      if (p <= 94) return "V8";
+      if (p <= 96) return "V9";
+      if (p <= 97.5) return "V10";
+      if (p <= 98.5) return "V11";
+      if (p <= 99.2) return "V12";
+      if (p <= 99.5) return "V13";
+      if (p <= 99.7) return "V14";
+      if (p <= 99.9) return "V15";
+      if (p <= 99.99) return "V16";
+      return "V17";
     }
 
-    // Assign estimated V-grades based on percentile rank
-    for (let i = 0; i < totalRoutes; i++) {
-    const percentile = (i / totalRoutes) * 100;
-    sortedRoutes[i].estimated_v_grade = assignVGrade(percentile);
-    }
+    sortedRoutes.forEach((r, i) => {
+      const pct = (i / total) * 100;
+      r.estimated_v_grade = vGrade(pct);
+    });
 
-    // Update database
-    for (const route of sortedRoutes) {
-    await pool.query(
-      `
-        UPDATE routes 
+    /* persist rank + grade ---------------------------------------- */
+    for (const r of sortedRoutes) {
+      await pool.query(
+        `
+        UPDATE routes
         SET calculated_rank = $1,
-            estimated_v_grade = $2 
+            estimated_v_grade = $2
         WHERE id = $3;
-      `,
-      [
-        route.rank,
-        route.estimated_v_grade, 
-        route.id
-      ]
-    );
+        `,
+        [r.rank, r.estimated_v_grade, r.id]
+      );
     }
 
-    console.log("Ranking and certainty calculation complete!");
-
+    console.log("Ranking & certainty calculation complete!");
   } catch (err) {
     console.error("Error calculating ranks:", err);
   } finally {
