@@ -321,6 +321,55 @@ app.post("/api/recalculate-ranks", async (req, res) => {
   child.on("close", code => console.log(`Rank script finished with code ${code}`));
 });
 
+// Get specific user stats.
+app.get('/api/user-stats', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    // Find all unique routes this user has compared (either as easier or harder)
+    const { rows: rankedRows } = await pool.query(
+      `
+      SELECT DISTINCT route_id FROM (
+        SELECT easier_route_id AS route_id FROM user_votes WHERE user_id = $1
+        UNION
+        SELECT harder_route_id AS route_id FROM user_votes WHERE user_id = $1
+      ) AS user_ranked
+      `,
+      [userId]
+    );
+    const numRanked = rankedRows.length;
+
+    // Get the hardest route (lowest "calculated_rank" among user's ranked routes)
+    let hardestRoute = null;
+    if (numRanked > 0) {
+      const { rows } = await pool.query(
+        `
+        SELECT r.name, r.calculated_rank
+        FROM routes r
+        WHERE r.id = ANY($1::int[])
+        ORDER BY r.calculated_rank ASC
+        LIMIT 1
+        `,
+        [rankedRows.map(r => r.route_id)]
+      );
+      if (rows.length) {
+        hardestRoute = {
+          name: rows[0].name,
+          rank: rows[0].calculated_rank
+        };
+      }
+    }
+
+    res.json({
+      numRanked,
+      hardestRoute // null if none
+    });
+  } catch (err) {
+    console.error("Error in /api/user-stats:", err);
+    res.status(500).json({ error: "Failed to fetch user stats." });
+  }
+});
+
 // Catch-all route for React Router
 app.get("*", (req, res) => {
   const indexPath = path.join(__dirname, "..", "dist", "index.html");
