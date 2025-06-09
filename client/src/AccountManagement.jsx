@@ -12,7 +12,7 @@ function AccountManagement({ user, setUser }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // --- New: user stats state
+  // user stats state
   const [userStats, setUserStats] = useState({
     numRanked: null,
     hardestRoute: null,
@@ -22,7 +22,7 @@ function AccountManagement({ user, setUser }) {
     async function fetchUserStats() {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`${API_BASE_URL}/api/user-stats`, {
+        const response = await fetch("/api/user-stats", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         if (response.ok) {
