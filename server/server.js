@@ -326,7 +326,7 @@ app.get('/api/user-stats', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // All route IDs the user has ranked
+    // Get all route IDs this user has ranked
     const { rows: rankedRows } = await pool.query(
       `
       SELECT DISTINCT route_id FROM (
@@ -343,10 +343,9 @@ app.get('/api/user-stats', authenticateToken, async (req, res) => {
     let hardestRoute = null;
 
     if (numRanked > 0) {
-      // Get all routes in global order
+      // Get all routes in global order (highest calculated_rank first)
       const allRoutesResult = await pool.query(
-        `SELECT id, name, calculated_score, calculated_rank FROM routes ORDER BY calculated_rank DESC`
-        // Or: `ORDER BY calculated_score DESC` if you don't have calculated_rank
+        `SELECT id, name, calculated_rank FROM routes ORDER BY calculated_rank DESC`
       );
       const allRoutes = allRoutesResult.rows;
 
@@ -357,7 +356,6 @@ app.get('/api/user-stats', authenticateToken, async (req, res) => {
         const globalRank = allRoutes.findIndex(r => r.id === hardest.id) + 1;
         hardestRoute = {
           name: hardest.name,
-          score: hardest.calculated_score,
           rank: globalRank
         };
       }
