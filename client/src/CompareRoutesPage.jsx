@@ -23,6 +23,7 @@ function CompareRoutesPage({ refetchRoutes }) {
   // === Area filter state ===
   const [areaInput, setAreaInput] = useState("");
   const [selectedAreas, setSelectedAreas] = useState([]);
+  const [showAreaNotFound, setShowAreaNotFound] = useState(false);
 
   // Build a list of unique area names for autocomplete
   const areaOptions = Array.from(
@@ -35,7 +36,20 @@ function CompareRoutesPage({ refetchRoutes }) {
       a.toLowerCase().includes(areaInput.toLowerCase()) &&
       !selectedAreas.includes(a)
   );
-  // =============================
+
+  // Show 'area not found' if input is not a valid area and not blank
+  useEffect(() => {
+    if (
+      areaInput &&
+      !areaOptions.includes(areaInput) &&
+      filteredAreaOptions.length === 0
+    ) {
+      setShowAreaNotFound(true);
+    } else {
+      setShowAreaNotFound(false);
+    }
+    // eslint-disable-next-line
+  }, [areaInput, areaOptions]);
 
   // Fetch all routes once, store them in state
   useEffect(() => {
@@ -49,7 +63,6 @@ function CompareRoutesPage({ refetchRoutes }) {
           }
         });
         const data = await response.json();
-        // data should be an array of route objects
         setAllRoutes(data);
       } catch (error) {
         console.error("Error fetching all routes:", error);
@@ -65,13 +78,8 @@ function CompareRoutesPage({ refetchRoutes }) {
     return `${id1},${id2}`;
   };
 
-  // Attempt to pick two distinct routes that:
-  //   1) Aren't in the skip list,
-  //   2) Haven’t been shown together before (usedPairs),
-  //   3) Are not the same route,
-  // If we can’t find any new pair, set noMoreRoutes = true.
+  // Attempt to pick two distinct routes that fit criteria
   const pickRandomPair = () => {
-    // === Use area filter ===
     const filteredRoutes = selectedAreas.length
       ? allRoutes.filter(
           r =>
@@ -80,7 +88,6 @@ function CompareRoutesPage({ refetchRoutes }) {
         )
       : allRoutes.filter(r => !skippedRoutesRef.current.includes(r.id));
 
-    // If fewer than 2 unskipped routes remain, there's not enough to display
     if (filteredRoutes.length < 2) {
       setNoMoreRoutes(true);
       setLeftRoute(null);
@@ -88,10 +95,8 @@ function CompareRoutesPage({ refetchRoutes }) {
       return;
     }
 
-    // Try a certain number of times to find a new pair
     let attempts = 0;
     while (attempts < 50) {
-      // pick two random distinct indexes
       const i1 = Math.floor(Math.random() * filteredRoutes.length);
       const i2 = Math.floor(Math.random() * filteredRoutes.length);
       if (i1 === i2) {
@@ -104,7 +109,6 @@ function CompareRoutesPage({ refetchRoutes }) {
 
       const pairKey = getPairKey(candidateLeft, candidateRight);
 
-      // If we haven't displayed this pair before, use it
       if (!usedPairsRef.current.includes(pairKey)) {
         setLeftRoute(candidateLeft);
         setRightRoute(candidateRight);
@@ -113,7 +117,6 @@ function CompareRoutesPage({ refetchRoutes }) {
       }
       attempts++;
     }
-    // If we can't find a new pair after many tries, assume no more are available
     setNoMoreRoutes(true);
     setLeftRoute(null);
     setRightRoute(null);
@@ -129,7 +132,6 @@ function CompareRoutesPage({ refetchRoutes }) {
 
   // Helper to refresh with a new pair
   const updateDisplayedRoute = (side) => {
-    // === Use area filter ===
     const filteredRoutes = selectedAreas.length
       ? allRoutes.filter(
           r =>
@@ -145,13 +147,11 @@ function CompareRoutesPage({ refetchRoutes }) {
       return;
     }
 
-    // routeToKeep is whichever route isn't being replaced
     const routeToKeep = side === "left" ? rightRoute : leftRoute;
 
     let attempts = 0;
     while (attempts < 100) {
       const candidate = filteredRoutes[Math.floor(Math.random() * filteredRoutes.length)];
-      // Avoid picking the same route that’s on the other side
       if (candidate.id === routeToKeep.id) {
         attempts++;
         continue;
@@ -163,7 +163,6 @@ function CompareRoutesPage({ refetchRoutes }) {
       );
 
       if (!usedPairsRef.current.includes(pairKey)) {
-        // Update either leftRoute or rightRoute
         if (side === "left") {
           setLeftRoute(candidate);
         } else {
@@ -212,7 +211,6 @@ function CompareRoutesPage({ refetchRoutes }) {
       const data = await response.json();
 
       if (response.ok) {
-        // Mark this pair as used in this session so we don't see it again
         const pairKey = getPairKey(leftRoute, rightRoute);
         setUsedPairs((prev) => {
           const updated = [...prev, pairKey];
@@ -220,7 +218,6 @@ function CompareRoutesPage({ refetchRoutes }) {
           return updated;
         });
 
-        // Get a new pair
         pickRandomPair();
       } else {
         console.error("Error saving comparison:", data);
@@ -231,7 +228,6 @@ function CompareRoutesPage({ refetchRoutes }) {
   };
 
   // The user says “I haven’t done this route” for left or right
-  // That route is never shown again
   const handleSkip = (side) => {
     if (side === "left" && leftRoute) {
       setSkippedRoutes((prev) => {
@@ -311,6 +307,18 @@ function CompareRoutesPage({ refetchRoutes }) {
           <option key={option} value={option} />
         ))}
       </datalist>
+      {showAreaNotFound && (
+        <div
+          style={{
+            color: "red",
+            marginTop: 4,
+            fontSize: "0.95em",
+            fontWeight: "bold"
+          }}
+        >
+          Area not found.
+        </div>
+      )}
       <div style={{ marginTop: 8 }}>
         {selectedAreas.map(area => (
           <span
@@ -322,6 +330,7 @@ function CompareRoutesPage({ refetchRoutes }) {
               padding: "4px 12px",
               marginRight: 8,
               marginBottom: 4,
+              fontSize: "1em"
             }}
           >
             {area}{" "}
@@ -331,6 +340,10 @@ function CompareRoutesPage({ refetchRoutes }) {
                 background: "transparent",
                 cursor: "pointer",
                 fontWeight: "bold",
+                fontSize: "1.3em", // Bigger X
+                color: "#111",      // Black X
+                lineHeight: "1",
+                paddingLeft: "4px"
               }}
               aria-label={`Remove ${area}`}
               onClick={() => {
