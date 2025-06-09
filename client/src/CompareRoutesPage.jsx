@@ -20,6 +20,23 @@ function CompareRoutesPage({ refetchRoutes }) {
   // Flag for “no more routes”
   const [noMoreRoutes, setNoMoreRoutes] = useState(false);
 
+  // === Area filter state ===
+  const [areaInput, setAreaInput] = useState("");
+  const [selectedAreas, setSelectedAreas] = useState([]);
+
+  // Build a list of unique area names for autocomplete
+  const areaOptions = Array.from(
+    new Set(allRoutes.map(r => r.area).filter(Boolean))
+  ).sort();
+
+  // Filter area options that match the current input and haven't been selected yet
+  const filteredAreaOptions = areaOptions.filter(
+    a =>
+      a.toLowerCase().includes(areaInput.toLowerCase()) &&
+      !selectedAreas.includes(a)
+  );
+  // =============================
+
   // Fetch all routes once, store them in state
   useEffect(() => {
     async function fetchAllRoutes() {
@@ -54,13 +71,20 @@ function CompareRoutesPage({ refetchRoutes }) {
   //   3) Are not the same route,
   // If we can’t find any new pair, set noMoreRoutes = true.
   const pickRandomPair = () => {
-    const unskipped = allRoutes.filter(
-      (r) => !skippedRoutesRef.current.includes(r.id)
-    );
+    // === Use area filter ===
+    const filteredRoutes = selectedAreas.length
+      ? allRoutes.filter(
+          r =>
+            selectedAreas.includes(r.area) &&
+            !skippedRoutesRef.current.includes(r.id)
+        )
+      : allRoutes.filter(r => !skippedRoutesRef.current.includes(r.id));
 
     // If fewer than 2 unskipped routes remain, there's not enough to display
-    if (unskipped.length < 2) {
+    if (filteredRoutes.length < 2) {
       setNoMoreRoutes(true);
+      setLeftRoute(null);
+      setRightRoute(null);
       return;
     }
 
@@ -68,15 +92,15 @@ function CompareRoutesPage({ refetchRoutes }) {
     let attempts = 0;
     while (attempts < 50) {
       // pick two random distinct indexes
-      const i1 = Math.floor(Math.random() * unskipped.length);
-      const i2 = Math.floor(Math.random() * unskipped.length);
+      const i1 = Math.floor(Math.random() * filteredRoutes.length);
+      const i2 = Math.floor(Math.random() * filteredRoutes.length);
       if (i1 === i2) {
         attempts++;
         continue;
       }
 
-      const candidateLeft = unskipped[i1];
-      const candidateRight = unskipped[i2];
+      const candidateLeft = filteredRoutes[i1];
+      const candidateRight = filteredRoutes[i2];
 
       const pairKey = getPairKey(candidateLeft, candidateRight);
 
@@ -91,22 +115,33 @@ function CompareRoutesPage({ refetchRoutes }) {
     }
     // If we can't find a new pair after many tries, assume no more are available
     setNoMoreRoutes(true);
+    setLeftRoute(null);
+    setRightRoute(null);
   };
 
-  // Whenever we load allRoutes, attempt picking our first pair
+  // Whenever we load allRoutes or selectedAreas, attempt picking our first pair
   useEffect(() => {
     if (allRoutes.length > 0) {
       pickRandomPair();
     }
-  }, [allRoutes]);
+    // eslint-disable-next-line
+  }, [allRoutes, selectedAreas]);
 
   // Helper to refresh with a new pair
   const updateDisplayedRoute = (side) => {
-    const unskipped = allRoutes.filter(
-      (r) => !skippedRoutesRef.current.includes(r.id)
-    );
-    if (unskipped.length < 2) {
+    // === Use area filter ===
+    const filteredRoutes = selectedAreas.length
+      ? allRoutes.filter(
+          r =>
+            selectedAreas.includes(r.area) &&
+            !skippedRoutesRef.current.includes(r.id)
+        )
+      : allRoutes.filter(r => !skippedRoutesRef.current.includes(r.id));
+
+    if (filteredRoutes.length < 2) {
       setNoMoreRoutes(true);
+      setLeftRoute(null);
+      setRightRoute(null);
       return;
     }
 
@@ -115,7 +150,7 @@ function CompareRoutesPage({ refetchRoutes }) {
 
     let attempts = 0;
     while (attempts < 100) {
-      const candidate = unskipped[Math.floor(Math.random() * unskipped.length)];
+      const candidate = filteredRoutes[Math.floor(Math.random() * filteredRoutes.length)];
       // Avoid picking the same route that’s on the other side
       if (candidate.id === routeToKeep.id) {
         attempts++;
@@ -141,6 +176,8 @@ function CompareRoutesPage({ refetchRoutes }) {
     }
 
     setNoMoreRoutes(true);
+    setLeftRoute(null);
+    setRightRoute(null);
   };
 
   // The user says “this route is harder”
@@ -177,22 +214,11 @@ function CompareRoutesPage({ refetchRoutes }) {
       if (response.ok) {
         // Mark this pair as used in this session so we don't see it again
         const pairKey = getPairKey(leftRoute, rightRoute);
-        console.log("Pair key for the compared routes: " + pairKey);
         setUsedPairs((prev) => {
           const updated = [...prev, pairKey];
           usedPairsRef.current = updated;
           return updated;
         });
-
-        /* COMMENTED OUT TO TEST BATCHING
-        // Recalculate ranks
-        await fetch(`/api/recalculate-ranks`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-        */
 
         // Get a new pair
         pickRandomPair();
@@ -224,6 +250,103 @@ function CompareRoutesPage({ refetchRoutes }) {
     }
   };
 
+  const handleBackToHome = async () => {
+    try {
+      await refetchRoutes();
+      navigate("/");
+    } catch (err) {
+      console.error("Error handling 'Back to home':", err);
+    }
+  };
+
+  // === UI rendering for area filter ===
+  const renderAreaFilterBar = () => (
+    <div style={{ marginBottom: '16px' }}>
+      <label>
+        <strong>Only include routes from:</strong>
+        <input
+          type="text"
+          value={areaInput}
+          placeholder="Type an area name..."
+          onChange={e => setAreaInput(e.target.value)}
+          style={{ marginLeft: 8, width: 200 }}
+          list="area-autocomplete-list"
+          onKeyDown={e => {
+            if (
+              e.key === "Enter" &&
+              areaInput &&
+              areaOptions.includes(areaInput) &&
+              !selectedAreas.includes(areaInput)
+            ) {
+              setSelectedAreas([...selectedAreas, areaInput]);
+              setAreaInput("");
+              pickRandomPair();
+            }
+          }}
+        />
+      </label>
+      <button
+        onClick={() => {
+          if (
+            areaInput &&
+            areaOptions.includes(areaInput) &&
+            !selectedAreas.includes(areaInput)
+          ) {
+            setSelectedAreas([...selectedAreas, areaInput]);
+            setAreaInput("");
+            pickRandomPair();
+          }
+        }}
+        disabled={
+          !areaInput ||
+          !areaOptions.includes(areaInput) ||
+          selectedAreas.includes(areaInput)
+        }
+        style={{ marginLeft: 8 }}
+      >
+        Add
+      </button>
+      <datalist id="area-autocomplete-list">
+        {filteredAreaOptions.map(option => (
+          <option key={option} value={option} />
+        ))}
+      </datalist>
+      <div style={{ marginTop: 8 }}>
+        {selectedAreas.map(area => (
+          <span
+            key={area}
+            style={{
+              display: "inline-block",
+              background: "#eee",
+              borderRadius: "12px",
+              padding: "4px 12px",
+              marginRight: 8,
+              marginBottom: 4,
+            }}
+          >
+            {area}{" "}
+            <button
+              style={{
+                border: "none",
+                background: "transparent",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+              aria-label={`Remove ${area}`}
+              onClick={() => {
+                setSelectedAreas(selectedAreas.filter(a => a !== area));
+                pickRandomPair();
+              }}
+            >
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+  // ================================
+
   if (noMoreRoutes) {
     return (
       <div>
@@ -235,19 +358,10 @@ function CompareRoutesPage({ refetchRoutes }) {
 
   if (!leftRoute || !rightRoute) return <p>Loading...</p>;
 
-  const handleBackToHome = async () => {
-    try {
-      await refetchRoutes();
-
-      navigate("/");
-    } catch (err) {
-      console.error("Error handling 'Back to home':", err);
-    }
-  }
-
   return (
     <div>
       <h2>Compare Routes</h2>
+      {renderAreaFilterBar()}
       <p className="compare-routes-header">
         Only compare routes you've sent. Even if you "know" one route is harder than the other, 
         if you haven't sent it, don't rate it. Try to base your decision on how hard the route felt 

@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 // Define paths
-const rawDataPath = path.join(process.cwd(), 'server/climbsData/rawData/tuolumne-areas.json');
-const outputFilePath = path.join(process.cwd(), 'server/climbsData/cleanedData/cleaned-tuolumne-area-names.json');
+const rawDataPath = path.join(process.cwd(), 'server/climbsData/rawData/hueco-climbs.json');
+const outputFilePath = path.join(process.cwd(), 'server/climbsData/cleanedData/cleaned-hueco-area-names.json');
 
 // Read and parse the JSON data
 const data = JSON.parse(fs.readFileSync(rawDataPath, 'utf-8'));
@@ -14,10 +14,10 @@ const secondLevelAreas = [];
 // Extract second-level area names from the `children` array
 if (data?.data?.area?.children && Array.isArray(data.data.area.children)) {
   data.data.area.children.forEach((child) => {
-    if (child.area_name) {
-      secondLevelAreas.push(child.area_name); // Add the area_name directly
+    if (child.areaName) {
+      secondLevelAreas.push(child.areaName); // Add the areaName directly
     } else {
-      console.warn('Missing area_name for child:', child);
+      console.warn('Missing areaName for child:', child);
     }
   });
 } else {
