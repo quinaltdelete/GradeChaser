@@ -4,19 +4,20 @@ import FilterToolbar from "./filterToolbar";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-function RankingDisplay({ routes }) {
+function RankingDisplay({ routes, user }) {
   const navigate = useNavigate(); 
   const [showUnranked, setShowUnranked] = useState(false);
 
   // Global routes sorted by calculated_rank in descending order.
   const sortedGlobalRoutes = Array.isArray(routes)
-  ? [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank)
-  : [];
+    ? [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank)
+    : [];
 
   // Initialize rankingType from localStorage so it persists across navigation.
   const [rankingType, setRankingType] = useState(() => {
     return localStorage.getItem("rankingType") || "global";
   });
+
   // Personal ranking routes state.
   const [personalRoutes, setPersonalRoutes] = useState([]);
 
@@ -45,7 +46,7 @@ function RankingDisplay({ routes }) {
 
   // When rankingType is "personal", fetch personal rankings from the API.
   useEffect(() => {
-    if (rankingType === "personal") {
+    if (rankingType === "personal" && user) {
       const token = localStorage.getItem("token");
       if (token) {
         fetch(`/api/personal-ranking`, {
@@ -56,13 +57,12 @@ function RankingDisplay({ routes }) {
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log("Fetched personal routes: ", data);
             setPersonalRoutes(Array.isArray(data) ? data : []);
           })
           .catch((error) => console.error("Error fetching personal rankings:", error));
       }
     }
-  }, [rankingType]);
+  }, [rankingType, user]);
 
   const sortedPersonalRoutes = [...personalRoutes].sort((a, b) => b.personal_score - a.personal_score);
 
@@ -128,14 +128,12 @@ function RankingDisplay({ routes }) {
   let refinedRoutes = listToRank.filter(route => {
     // Exclude unranked unless showUnranked is true
     if (!showUnranked && !route.has_comparisons) return false;
-  
     // Apply refinement filters
     if (filters.area && !route.area.toLowerCase().includes(filters.area.toLowerCase())) return false;
     if (filters.subArea && !route.sub_area.toLowerCase().includes(filters.subArea.toLowerCase())) return false;
     if (filters.country && !route.country.toLowerCase().includes(filters.country.toLowerCase())) return false;
     if (filters.certainty && route.certainty_score < parseFloat(filters.certainty)) return false;
     if (filters.vGrade && route.estimated_v_grade !== filters.vGrade) return false;
-  
     return true;
   });  
 
@@ -153,8 +151,6 @@ function RankingDisplay({ routes }) {
   const handlePrevious = () => setCurrentPage(prev => Math.max(prev - 1, 0));
   const handleNext = () => setCurrentPage(prev => Math.min(prev + 1, totalPages - 1));
 
-  console.log("Currently displayed routes:", listToRank);
-
   return (
     <div>
       <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking ({rankingType}):</p>
@@ -165,17 +161,33 @@ function RankingDisplay({ routes }) {
             setRankingType(prev => (prev === "global" ? "personal" : "global"));
             setCurrentPage(0);
           }}
+          disabled={!user}
+          title={user ? "" : "Log in to see your personal ranking"}
         >
-          {rankingType === "global" ? "See personal ranking" : "See global ranking"}
+          {rankingType === "global"
+            ? "See personal ranking"
+            : "See global ranking"}
         </button>
 
-        <Link to="/add-route">
-          <button>Rank a Specific Route</button>
-        </Link>
-
-        <button onClick={() => navigate("/compare-routes")} >
-          Compare Random Routes
-        </button>
+        {user ? (
+          <>
+            <Link to="/add-route">
+              <button>Rank a Specific Route</button>
+            </Link>
+            <button onClick={() => navigate("/compare-routes")}>
+              Compare Random Routes
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login">
+              <button>Log in to Rank a Route</button>
+            </Link>
+            <button onClick={() => navigate("/login")}>
+              Log in to Compare Random Routes
+            </button>
+          </>
+        )}
       </div>
 
       <FilterToolbar routes={routes} onFilterChange={handleFilterChange} />
