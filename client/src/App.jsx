@@ -81,12 +81,10 @@ function App() {
     return () => clearInterval(interval);
   }, []);  
 
-  // Fetch routes only if user is logged in.
+  // Always fetch routes, regardless of login status
   useEffect(() => {
-    if (user) {
-      refetchRoutes();
-    }
-  }, [user]);
+    refetchRoutes();
+  }, []);
 
   return (
     <Router>
@@ -108,9 +106,11 @@ function App() {
         <Routes>
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="/login" element={<LoginPage setUser={setUser} />} />
+          <Route path="/signup" element={<SignupPage setUser={setUser} />} />
+          <Route path="/" element={<HomePage routes={routes} user={user} />} />
           {user ? (
             <>
-              <Route path="/" element={<HomePage routes={routes} user={user} />} />
               <Route path="/add-route" element={<AddRoutePage />} />
               <Route path="/add-route/:routeName" element={<AddRoutePage />} />
               <Route path="/route/:id" element={<RoutePage user={user} />} />
@@ -120,11 +120,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" />} />
             </>
           ) : (
-            <>
-              <Route path="/login" element={<LoginPage setUser={setUser} />} />
-              <Route path="/signup" element={<SignupPage setUser={setUser} />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </>
+            <Route path="*" element={<Navigate to="/" />} />
           )}
         </Routes>
       </div>

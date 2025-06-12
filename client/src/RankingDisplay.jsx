@@ -13,8 +13,10 @@ function RankingDisplay({ routes, user }) {
     ? [...routes].sort((a, b) => b.calculated_rank - a.calculated_rank)
     : [];
 
-  // Initialize rankingType from localStorage so it persists across navigation.
+  // Initialize rankingType from localStorage only if user is logged in.
+  // For logged-out users, always show global ranking.
   const [rankingType, setRankingType] = useState(() => {
+    if (!user) return "global";
     return localStorage.getItem("rankingType") || "global";
   });
 
@@ -39,10 +41,19 @@ function RankingDisplay({ routes, user }) {
   // State to hold the highlighted route ID (for jump filters).
   const [highlightedRouteId, setHighlightedRouteId] = useState(null);
 
-  // Persist rankingType to localStorage whenever it changes.
+  // If user logs out, reset to global ranking
   useEffect(() => {
-    localStorage.setItem("rankingType", rankingType);
-  }, [rankingType]);
+    if (!user && rankingType === "personal") {
+      setRankingType("global");
+    }
+  }, [user, rankingType]);
+
+  // Persist rankingType to localStorage whenever it changes, but only if user is logged in.
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("rankingType", rankingType);
+    }
+  }, [rankingType, user]);
 
   // When rankingType is "personal", fetch personal rankings from the API.
   useEffect(() => {
@@ -153,7 +164,7 @@ function RankingDisplay({ routes, user }) {
 
   return (
     <div>
-      <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking ({rankingType}):</p>
+      <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking (global):</p>
 
       <div className="left-button-group" style={{ marginBottom: "1em" }}>
         {user ? (
@@ -178,7 +189,7 @@ function RankingDisplay({ routes, user }) {
         ) : (
           <div style={{ textAlign: "center", width: "100%" }}>
             <Link to="/login" style={{ fontWeight: "bold", fontSize: "14px", color: "#2266bb" }}>
-              Log in to add your own rankings.
+              Log in to add your routes.
             </Link>
           </div>
         )}
@@ -244,9 +255,13 @@ function RankingDisplay({ routes, user }) {
             <tr key={route.id}>
               <td>{startIndex + index + 1}</td>
               <td>
-                <Link to={`/route/${route.id}`} style={{ textDecoration: "none", color: "blue" }}>
-                  {route.id === highlightedRouteId ? <strong>{route.name}</strong> : route.name}
-                </Link>
+                {user ? (
+                  <Link to={`/route/${route.id}`} style={{ textDecoration: "none", color: "blue" }}>
+                    {route.id === highlightedRouteId ? <strong>{route.name}</strong> : route.name}
+                  </Link>
+                ) : (
+                  route.id === highlightedRouteId ? <strong>{route.name}</strong> : route.name
+                )}
               </td>
               <td>{route.area}</td>
               <td>{route.sub_area}</td>
