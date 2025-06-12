@@ -28,13 +28,8 @@ function App() {
     .catch(err => console.error("Error fetching routes:", err));
   }
 
-  // Always fetch routes, regardless of authentication
-  useEffect(() => {
-    refetchRoutes();
-  }, []);
-
-  // Check for token on app load.
-  useEffect(() => {
+   // Check for token on app load.
+   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       // Fetch the user from the server:
@@ -86,6 +81,13 @@ function App() {
     return () => clearInterval(interval);
   }, []);  
 
+  // Fetch routes only if user is logged in.
+  useEffect(() => {
+    if (user) {
+      refetchRoutes();
+    }
+  }, [user]);
+
   return (
     <Router>
       <div className="container">
@@ -104,25 +106,26 @@ function App() {
 
       <div className="container main-content">
         <Routes>
-          <Route path="/" element={<HomePage routes={routes} user={user} />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-          <Route path="/route/:id" element={<RoutePage user={user} />} />
-          <Route path="/ranking" element={<RankingDisplay routes={routes} user={user} />} />
           {user ? (
             <>
+              <Route path="/" element={<HomePage routes={routes} user={user} />} />
               <Route path="/add-route" element={<AddRoutePage />} />
               <Route path="/add-route/:routeName" element={<AddRoutePage />} />
+              <Route path="/route/:id" element={<RoutePage user={user} />} />
+              <Route path="/ranking" element={<RankingDisplay routes={routes} />} />
               <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
               <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
+              <Route path="*" element={<Navigate to="/" />} />
             </>
           ) : (
             <>
               <Route path="/login" element={<LoginPage setUser={setUser} />} />
               <Route path="/signup" element={<SignupPage setUser={setUser} />} />
+              <Route path="*" element={<Navigate to="/login" />} />
             </>
           )}
-          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
     </Router>

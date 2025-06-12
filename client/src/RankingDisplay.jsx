@@ -5,7 +5,6 @@ import FilterToolbar from "./filterToolbar";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function RankingDisplay({ routes, user }) {
-  console.log("RankingDisplay user:", user);
   const navigate = useNavigate(); 
   const [showUnranked, setShowUnranked] = useState(false);
 
@@ -156,34 +155,34 @@ function RankingDisplay({ routes, user }) {
     <div>
       <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking ({rankingType}):</p>
 
-<div className="left-button-group" style={{ marginBottom: "1em" }}>
-    {user && user.username ? (
-      <>
-        <button
-          onClick={() => {
-            setRankingType(prev => (prev === "global" ? "personal" : "global"));
-            setCurrentPage(0);
-          }}
-        >
-          {rankingType === "global"
-            ? "See personal ranking"
-            : "See global ranking"}
-        </button>
-        <Link to="/add-route">
-          <button>Rank a Specific Route</button>
-        </Link>
-        <button onClick={() => navigate("/compare-routes")}>
-          Compare Random Routes
-        </button>
-      </>
-    ) : (
-      <div style={{ textAlign: "center", width: "100%" }}>
-        <Link to="/login" style={{ fontWeight: "bold", fontSize: "16px", color: "#2266bb" }}>
-          Log in to add your own rankings.
-        </Link>
+      <div className="left-button-group" style={{ marginBottom: "1em" }}>
+        {user ? (
+          <>
+            <button
+              onClick={() => {
+                setRankingType(prev => (prev === "global" ? "personal" : "global"));
+                setCurrentPage(0);
+              }}
+            >
+              {rankingType === "global"
+                ? "See personal ranking"
+                : "See global ranking"}
+            </button>
+            <Link to="/add-route">
+              <button>Rank a Specific Route</button>
+            </Link>
+            <button onClick={() => navigate("/compare-routes")}>
+              Compare Random Routes
+            </button>
+          </>
+        ) : (
+          <div style={{ textAlign: "center", width: "100%" }}>
+            <Link to="/login" style={{ fontWeight: "bold", fontSize: "14px", color: "#2266bb" }}>
+              Log in to add your own rankings.
+            </Link>
+          </div>
+        )}
       </div>
-    )}
-  </div>
 
       <FilterToolbar routes={routes} onFilterChange={handleFilterChange} />
 
