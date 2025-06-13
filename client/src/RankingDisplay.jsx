@@ -185,6 +185,9 @@ function RankingDisplay({ routes, user }) {
             <button onClick={() => navigate("/compare-routes")}>
               Compare Random Routes
             </button>
+            <button onClick={() => navigate("/generate-ticklist")}>
+              Generate a ticklist
+            </button>
           </>
         ) : (
           <div style={{ textAlign: "center", width: "100%" }}>

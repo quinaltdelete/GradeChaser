@@ -117,6 +117,7 @@ function App() {
               <Route path="/ranking" element={<RankingDisplay routes={routes} />} />
               <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
               <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
+              <Route path="/generate-ticklist" element={<GenerateTicklistPage user={user} />}/>
               <Route path="*" element={<Navigate to="/" />} />
             </>
           ) : (
