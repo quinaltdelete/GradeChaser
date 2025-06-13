@@ -11,6 +11,7 @@ import Header from "./Header";
 import CompareRoutesPage from "./CompareRoutesPage";
 import ForgotPasswordPage from "./ForgotPasswordPage";
 import ResetPasswordPage from "./ResetPasswordPage";
+import GenerateTicklistPage from "./GenerateTicklistPage";
 import "./App.css";
 
 function App() {
