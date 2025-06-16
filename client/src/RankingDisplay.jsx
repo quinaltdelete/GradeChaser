@@ -164,7 +164,7 @@ function RankingDisplay({ routes, user }) {
 
   return (
     <div>
-      <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking (global):</p>
+      <p style={{ textAlign: "center", fontSize: "18px" }}> Overall Ranking ({rankingType}):</p>
 
       <div className="left-button-group" style={{ marginBottom: "1em" }}>
         {user ? (
