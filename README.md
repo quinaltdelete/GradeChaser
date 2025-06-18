@@ -1,10 +1,12 @@
 What is Gradechaser?
 
 Basic overview
+
 Gradechaser is a true consensus grading system. That means that anyone who has climbed a boulder problem can have a say in ranking how hard it is. 
 At the simplest level, think of it as voting for the grade you think a boulder problem should be given. 
 
 How to use it
+
 Instead of giving a boulder problem a v-grade, you compare it to other problems you’ve sent. You can add as many comparisons as you want. 
 Search for a specific climb, then name any other problems you’ve done that felt easier, and any that felt harder. And I mean any - 
 it’s still useful for the system to know that the super-easy warm up is in fact easier than the latest v-17 mega proj. 
@@ -12,7 +14,9 @@ Just make sure to stick to comparing problems you’ve actually sent - the whole
 not what you assume is the harder or easier climb.
 
 Why is it useful?
-Consensus grading is good
+
+Consensus grading is good.
+
 One of the problems with traditional grading is that any given number grade is totally subjective. After climbing for a while, most climbers start to 
 get a sense of what a certain grade feels like, more or less, but everyone has had the experience of getting on a certain grade and feeling like it’s 
 way harder than what book calls it. Or vice-versa: you send a climb in a couple goes, even when you’re used to spending multiple sessions in order to 
