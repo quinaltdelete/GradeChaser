@@ -1,4 +1,5 @@
 What is Gradechaser?
+
 Basic overview
 Gradechaser is a true consensus grading system. That means that anyone who has climbed a boulder problem can have a say in ranking how hard it is. 
 At the simplest level, think of it as voting for the grade you think a boulder problem should be given. 
