@@ -14,7 +14,7 @@ const pool = new Pool({
 
 async function main() {
   try {
-    const filePath = path.join(__dirname, 'climbsData/cleanedData/cleaned-hueco-climbs.json');
+    const filePath = path.join(__dirname, 'climbsData/cleanedData/cleaned-squamish-climbs.json');
 
 if (!fs.existsSync(filePath)) {
   console.error(`File not found: ${filePath}`);

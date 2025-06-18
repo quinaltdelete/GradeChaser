@@ -30,8 +30,11 @@ function Header({ user, setUser }) {
         onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
         onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
       >
-        Logout
+        Logout 
       </button>
+      {" | "}
+      <Link to="/about">About</Link>
+      {" | "}
     </div>
   );
 }

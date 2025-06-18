@@ -12,6 +12,7 @@ import CompareRoutesPage from "./CompareRoutesPage";
 import ForgotPasswordPage from "./ForgotPasswordPage";
 import ResetPasswordPage from "./ResetPasswordPage";
 import GenerateTicklistPage from "./GenerateTicklistPage";
+import AboutPage from "./AboutPage";
 import "./App.css";
 
 function App() {
@@ -117,6 +118,7 @@ function App() {
               <Route path="/route/:id" element={<RoutePage user={user} />} />
               <Route path="/ranking" element={<RankingDisplay routes={routes} user={user} />} />
               <Route path="/account" element={<AccountManagement user={user} setUser={setUser} />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/compare-routes" element={<CompareRoutesPage refetchRoutes={refetchRoutes}/>} />
               <Route path="/generate-ticklist" element={<GenerateTicklistPage user={user} />}/>
               <Route path="*" element={<Navigate to="/" />} />
