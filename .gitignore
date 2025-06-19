@@ -1,8 +1,6 @@
 .env
 node_modules/
 cleaned-buttermilk-climbs.json
-flatten-climbs.js
-insert-climbs.js
 climbsData/
 graphiql.json
 calculateTrueSkillRanks.js

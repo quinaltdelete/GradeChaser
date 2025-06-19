@@ -9,7 +9,7 @@ const pool = new Pool({
 const ITERATIONS     = 200;
 const INITIAL_SCORE  = 1000;
 
-/* ─── certainty parameters ─────────────────────────────────────── */
+/* certainty parameters  */
 const TAU1 = 20;            // ~number of votes to reach 63 % of max volume
 const ALPHA = 0.40;          // weight of coverage
 const BETA = 0.30;           // weight of vote volume
@@ -20,9 +20,9 @@ async function calculateBradleyTerryRanks() {
   try {
     console.log("Fetching data…");
 
-    /* ─── routes & comparisons ─────────────────────────────────── */
+    /* routes & comparisons */
     const routesResult = await pool.query("SELECT id FROM routes;");
-    const routes = routesResult.rows.map((row) => row.id);         // [id]
+    const routes = routesResult.rows.map((row) => row.id);
 
     const strengths = Object.fromEntries(routes.map((id) => [id, INITIAL_SCORE]));
 
@@ -32,9 +32,9 @@ async function calculateBradleyTerryRanks() {
     `);
     const comparisons = edgesResult.rows;
 
-    /* ─── prepare adjacency  (for coverage) ────────────────────── */
-    const adjacency  = {};              // harder → easier
-    const adjacencyR = {};              // easier → harder
+    /* prepare adjacency  (for coverage) */
+    const adjacency  = {};              // harder to easier
+    const adjacencyR = {};              // easier to harder
     routes.forEach((id) => { adjacency[id] = new Set(); adjacencyR[id] = new Set(); });
 
     comparisons.forEach(({ harder_route_id: h, easier_route_id: e }) => {
@@ -42,7 +42,7 @@ async function calculateBradleyTerryRanks() {
       adjacencyR[e].add(h);
     });
 
-    /* ─── vote volume & unique opponents (for boosters) ────────── */
+    /* vote volume & unique opponents */
     const counts = {}; 
     routes.forEach((id) => (counts[id] = { votes: 0, opps: new Set() }));
 
@@ -53,7 +53,7 @@ async function calculateBradleyTerryRanks() {
       counts[e].opps.add(h);
     });
 
-    /* ─── coverage via BFS per route ───────────────────────────── */
+    /* coverage via BFS per route */
     const allDesc  = {};
     const allAnc   = {};
 
@@ -81,23 +81,23 @@ async function calculateBradleyTerryRanks() {
       allAnc[r] = visA;
     }
 
-    /* ─── certainty calculation ───────────────────────────────── */
+    /* certainty calculation */
     const certaintyScores = {};
 
     routes.forEach((r) => {
-      /* 1. coverage ------------------------------------------------ */
+      /* coverage */
       const reachable = new Set([...allDesc[r], ...allAnc[r]]).size;
-      const coverage  = reachable / (routes.length - 1);            // 0 … 1
+      const coverage  = reachable / (routes.length - 1);           
 
-      /* 2. vote volume -------------------------------------------- */
-      const nVotes = counts[r].votes;                               // integer
-      const volume = 1 - Math.exp(-nVotes / TAU1);                  // saturating 0 … 1
+      /* vote volume  */
+      const nVotes = counts[r].votes;     
+      const volume = 1 - Math.exp(-nVotes / TAU1);
 
-      /* 3. opponent diversity ------------------------------------- */
+      /* opponent diversity */
       const nOpp   = counts[r].opps.size;
-      const diversity = nOpp / (routes.length - 1);                 // 0 … 1
+      const diversity = nOpp / (routes.length - 1);                
 
-      /* 4. blended certainty -------------------------------------- */
+      /* blended certainty */
       const blended =
         ALPHA * coverage +
         BETA  * volume   +
@@ -106,7 +106,7 @@ async function calculateBradleyTerryRanks() {
       certaintyScores[r] = Math.min(100, (blended * 100).toFixed(1));
     });
 
-    /* persist certainty ------------------------------------------- */
+    /* persist certainty */
     for (const r of routes) {
       await pool.query(
         "UPDATE routes SET certainty_score = $1 WHERE id = $2;",
@@ -114,7 +114,7 @@ async function calculateBradleyTerryRanks() {
       );
     }
 
-    /* ─── Bradley–Terry iterations (unchanged) ──────────────────── */
+    /* Bradley–Terry iterations */
     console.log(
       `Ranking ${routes.length} routes based on ${comparisons.length} comparisons…`
     );
@@ -135,16 +135,17 @@ async function calculateBradleyTerryRanks() {
       });
     }
 
-    /* normalise to 0-1000 ----------------------------------------- */
+    /* normalise scores to 0-1000 */
     const maxStrength = Math.max(...Object.values(strengths));
     routes.forEach((id) => (strengths[id] = (strengths[id] / maxStrength) * 1000));
 
-    /* rank list --------------------------------------------------- */
+    /* rank list */
     const sortedRoutes = routes
       .map((id) => ({ id, rank: strengths[id] }))
       .sort((a, b) => a.rank - b.rank);
 
-    /* assign V-grades --------------------------------- */
+    /* assign V-grades */
+    /* NOTE: I just guessed at proportions for now - maybe worth looking at acutal distributions of difficulties */
     const total = sortedRoutes.length;
     function vGrade(p) {
       if (p <= 30) return "V0";
@@ -172,7 +173,7 @@ async function calculateBradleyTerryRanks() {
       r.estimated_v_grade = vGrade(pct);
     });
 
-    /* persist rank + grade ---------------------------------------- */
+    /* persist rank + grade */
     for (const r of sortedRoutes) {
       await pool.query(
         `
