@@ -5,3 +5,4 @@ flatten-climbs.js
 insert-climbs.js
 climbsData/
 graphiql.json
+calculateTrueSkillRanks.js

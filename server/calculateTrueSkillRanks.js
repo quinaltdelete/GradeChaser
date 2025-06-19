@@ -11,7 +11,7 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
-// NEW: Define a default rating using TrueSkill's default.
+// Define a default rating using TrueSkill's default.
 const defaultRating = new trueskill.Rating();
 
 async function calculateTrueSkillRanks() {
@@ -25,7 +25,7 @@ async function calculateTrueSkillRanks() {
     // Initialize ratings for all routes with the default rating.
     let ratings = {};
     routeIds.forEach(id => {
-      ratings[id] = defaultRating; // NEW: All routes start with default rating.
+      ratings[id] = defaultRating; // All routes start with default rating.
     });
 
     // Get all comparisons from the route_relationships table.
@@ -42,7 +42,7 @@ async function calculateTrueSkillRanks() {
     comparisons.forEach(({ harder_route_id, easier_route_id, weight }) => {
       // Apply the comparison 'weight' times.
       for (let i = 0; i < weight; i++) {
-        // NEW: Use trueskill.rate to update the ratings.
+        // Use trueskill.rate to update the ratings.
         // The API expects an array of teams, each team being an array of ratings.
         // Here, [0,1] indicates that the first team (harder route) wins.
         const [newHarder, newEasier] = trueskill.rate(
@@ -57,7 +57,7 @@ async function calculateTrueSkillRanks() {
     // Update the calculated_rank in the database using the rating mean (mu).
     for (const id of routeIds) {
       const rating = ratings[id];
-      const newRank = rating.mu;  // NEW: Using mu as the ranking value.
+      const newRank = rating.mu;  // Using mu as the ranking value.
       await pool.query("UPDATE routes SET calculated_rank = $1 WHERE id = $2;", [newRank, id]);
     }
 
