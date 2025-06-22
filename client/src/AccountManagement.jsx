@@ -3,6 +3,13 @@ import { useNavigate, Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
+// Ordinal helper
+function getOrdinal(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
 function AccountManagement({ user, setUser }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
@@ -121,14 +128,7 @@ function AccountManagement({ user, setUser }) {
                   <p>
                     Your hardest route so far is <strong>{userStats.hardestRoute.name}</strong>,
                     which is the <strong>
-                      {userStats.hardestRoute.rank}
-                      {userStats.hardestRoute.rank === 1
-                        ? "st"
-                        : userStats.hardestRoute.rank === 2
-                        ? "nd"
-                        : userStats.hardestRoute.rank === 3
-                        ? "rd"
-                        : "th"}
+                      {getOrdinal(userStats.hardestRoute.rank)}
                     </strong>{" "}
                     hardest climb in the world!
                   </p>
