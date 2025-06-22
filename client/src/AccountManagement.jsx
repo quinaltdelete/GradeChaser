@@ -113,7 +113,7 @@ function AccountManagement({ user, setUser }) {
               <>
                 <p>You've ranked <strong>{userStats.numRanked}</strong> climb{userStats.numRanked === 1 ? '' : 's'}.</p>
                 <p>
-                  <Link to="/compare" style={{ color: "#1c6ae4", textDecoration: "underline" }}>
+                  <Link to="/compare-routes" style={{ color: "#1c6ae4", textDecoration: "underline" }}>
                     Go rank some more!
                   </Link>
                 </p>
