@@ -224,7 +224,7 @@ function RankingDisplay({ routes, user }) {
             <th>Country</th>
             <th>
               Book Grade
-              <span className="info-icon">i
+              <span className="info-icon" tabIndex={0}>i
                 <span className="tooltip">
                   This is the grade of the climb according to at least one published source. 
                   Different sources might report different grades.
@@ -233,7 +233,7 @@ function RankingDisplay({ routes, user }) {
             </th>
             <th>
               Estimated Grade
-              <span className="info-icon">i
+              <span className="info-icon" tabIndex={0}>i
                 <span className="tooltip">
                   This is what we estimate the grade for this climb should be, 
                   based on its place in the ranking.
@@ -243,7 +243,7 @@ function RankingDisplay({ routes, user }) {
 
             <th>
               Certainty
-              <span className="info-icon">i
+              <span className="info-icon" tabIndex={0}>i
                 <span className="tooltip">
                   This is roughly how certain we are that this climb should be at this spot in the ranking. 
                   Climbs with low certainty might seem like they're in the wrong place in the ranking. 

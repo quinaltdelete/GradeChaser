@@ -460,8 +460,9 @@ th {
   display: block;
 }
 
-/* Tooltip base style */
-.tooltip {
+/* Hide tooltip by default */
+.info-icon .tooltip {
+  display: none;
   position: absolute;
   z-index: 100;
   background: #fff;
@@ -475,22 +476,17 @@ th {
   max-width: 260px;
   word-break: break-word;
   white-space: normal;
-}
-
-/* Make sure info-icon is positioned relatively for tooltip to be within the cell */
-.info-icon {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-/* Tooltip on the right, but flip left if close to edge */
-.info-icon .tooltip {
-  left: 110%;
   top: 0;
+  left: 110%;
 }
 
-/* If the info-icon is the last child of the row, show tooltip to the left */
+/* Show tooltip on hover/focus */
+.info-icon:hover .tooltip,
+.info-icon:focus .tooltip {
+  display: block;
+}
+
+/* For the last column, flip tooltip to the left */
 th:last-child .info-icon .tooltip,
 td:last-child .info-icon .tooltip {
   left: auto;
