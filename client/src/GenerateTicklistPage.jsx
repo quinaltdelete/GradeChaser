@@ -125,62 +125,76 @@ function GenerateTicklistPage({ user }) {
       <h2>Generate Ticklist</h2>
       <p>Generate a personalized ticklist based on your climbing preferences and ranking history.</p>
 
-      <div className="form-block" style={{ marginLeft: '0' }}>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="area">
+      <div style={{ marginBottom: '2em' }}>
+        <form onSubmit={handleSubmit} style={{ maxWidth: 'none', margin: '0' }}>
+          <label htmlFor="area" style={{ display: 'block', marginBottom: '0.5em', fontWeight: '500' }}>
             Select Area:
-            <div style={{ position: 'relative' }}>
-              <input
-                type="text"
-                id="area"
-                value={selectedArea}
-                onChange={handleAreaChange}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                placeholder="Start typing an area name..."
-              />
-              {showSuggestions && filteredAreas.length > 0 && (
-                <ul className="suggestion-list" style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: '0',
-                  right: '0',
-                  backgroundColor: 'white',
-                  border: '1px solid #ccc',
-                  borderTop: 'none',
-                  borderRadius: '0 0 4px 4px',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                  zIndex: 1000,
-                  margin: 0,
-                  padding: '5px'
-                }}>
-                  {filteredAreas.slice(0, 10).map((area, index) => (
-                    <li
-                      key={index}
-                      onClick={() => handleAreaSelect(area)}
-                      style={{
-                        cursor: 'pointer',
-                        padding: '4px 8px',
-                        listStyle: 'none'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#eee'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
-                    >
-                      {area}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
           </label>
+          <div style={{ position: 'relative', marginBottom: '1em' }}>
+            <input
+              type="text"
+              id="area"
+              value={selectedArea}
+              onChange={handleAreaChange}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              placeholder="Start typing an area name..."
+              style={{
+                width: '300px',
+                padding: '6px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'var(--font-family)',
+                boxSizing: 'border-box'
+              }}
+            />
+            {showSuggestions && filteredAreas.length > 0 && (
+              <ul className="suggestion-list" style={{
+                position: 'absolute',
+                top: '100%',
+                left: '0',
+                width: '300px',
+                backgroundColor: 'white',
+                border: '1px solid #ccc',
+                borderTop: 'none',
+                borderRadius: '0 0 4px 4px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                zIndex: 1000,
+                margin: 0,
+                padding: '5px'
+              }}>
+                {filteredAreas.slice(0, 10).map((area, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleAreaSelect(area)}
+                    style={{
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      listStyle: 'none'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#eee'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                  >
+                    {area}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <button
             type="submit"
             disabled={loading}
             style={{
               backgroundColor: loading ? '#444444' : '#000000',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: loading ? 'not-allowed' : 'pointer',
+              padding: '6px 12px',
+              border: 'none',
+              color: 'white',
+              borderRadius: '4px',
+              fontFamily: 'var(--font-family)'
             }}
           >
             {loading ? 'Generating...' : 'Generate Ticklist'}
