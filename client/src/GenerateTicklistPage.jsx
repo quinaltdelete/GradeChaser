@@ -83,7 +83,14 @@ function GenerateTicklistPage({ user }) {
     return (
       <div style={{ marginBottom: '2em' }}>
         <h3>{title}</h3>
-        <table className="ranking-table">
+        <table className="ranking-table" style={{ tableLayout: 'fixed' }}>
+          <colgroup>
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '25%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '15%' }} />
+          </colgroup>
           <thead>
             <tr>
               <th>Route Name</th>
