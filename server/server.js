@@ -371,6 +371,124 @@ app.get('/api/user-stats', authenticateToken, async (req, res) => {
   }
 });
 
+// Generate a personalized ticklist for the user
+app.post('/api/generate-ticklist', authenticateToken, async (req, res) => {
+  const { area } = req.body;
+  const userId = req.user.id;
+
+  if (!area) {
+    return res.status(400).json({ error: "Area is required" });
+  }
+
+  try {
+    // Get all routes the user has ranked with their scores
+    const userRankedResult = await pool.query(`
+      SELECT DISTINCT r.id, r.calculated_rank
+      FROM routes r
+      INNER JOIN (
+        SELECT easier_route_id AS route_id FROM user_votes WHERE user_id = $1
+        UNION
+        SELECT harder_route_id AS route_id FROM user_votes WHERE user_id = $1
+      ) user_routes ON r.id = user_routes.route_id
+      WHERE r.calculated_rank IS NOT NULL
+      ORDER BY r.calculated_rank DESC
+    `, [userId]);
+
+    const userRankedRoutes = userRankedResult.rows;
+
+    if (userRankedRoutes.length < 3) {
+      return res.status(400).json({ 
+        error: "You need to rank at least 3 routes to generate a ticklist" 
+      });
+    }
+
+    // Split into thirds and calculate averages
+    const total = userRankedRoutes.length;
+    const thirdSize = Math.floor(total / 3);
+    
+    const topThird = userRankedRoutes.slice(0, thirdSize);
+    const middleThird = userRankedRoutes.slice(thirdSize, thirdSize * 2);
+    const bottomThird = userRankedRoutes.slice(thirdSize * 2);
+
+    const topAverage = topThird.reduce((sum, route) => sum + route.calculated_rank, 0) / topThird.length;
+    const middleAverage = middleThird.reduce((sum, route) => sum + route.calculated_rank, 0) / middleThird.length;
+    const bottomAverage = bottomThird.reduce((sum, route) => sum + route.calculated_rank, 0) / bottomThird.length;
+
+    // Get user's ranked route IDs to exclude
+    const userRouteIds = userRankedRoutes.map(r => r.id);
+
+    // Function to find closest routes to a target score
+    const findClosestRoutes = async (targetScore, category) => {
+      const result = await pool.query(`
+        SELECT id, name, area, sub_area, country, book_grade, estimated_v_grade, calculated_rank,
+               ABS(calculated_rank - $1) as score_diff
+        FROM routes 
+        WHERE area ILIKE $2 
+          AND calculated_rank IS NOT NULL
+          AND id != ALL($3::int[])
+        ORDER BY score_diff ASC
+        LIMIT 5
+      `, [targetScore, area, userRouteIds]);
+
+      return result.rows.map(route => ({
+        ...route,
+        category
+      }));
+    };
+
+    // Find routes for each category
+    const [projects, sessionable, warmups] = await Promise.all([
+      findClosestRoutes(topAverage, 'Projects'),
+      findClosestRoutes(middleAverage, 'Sessionable Climbs'),
+      findClosestRoutes(bottomAverage, 'Warmups')
+    ]);
+
+    // Check if we found any routes
+    if (projects.length === 0 && sessionable.length === 0 && warmups.length === 0) {
+      return res.status(404).json({ 
+        error: `No unranked routes found in the area "${area}"` 
+      });
+    }
+
+    res.json({
+      area,
+      userStats: {
+        totalRanked: total,
+        topAverage: Math.round(topAverage * 100) / 100,
+        middleAverage: Math.round(middleAverage * 100) / 100,
+        bottomAverage: Math.round(bottomAverage * 100) / 100
+      },
+      ticklist: {
+        projects,
+        sessionable,
+        warmups
+      }
+    });
+
+  } catch (err) {
+    console.error("Error generating ticklist:", err);
+    res.status(500).json({ error: "Failed to generate ticklist" });
+  }
+});
+
+// Get list of all areas for autocomplete
+app.get('/api/areas', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT DISTINCT area 
+      FROM routes 
+      WHERE area IS NOT NULL AND area != ''
+      ORDER BY area ASC
+    `);
+    
+    const areas = result.rows.map(row => row.area);
+    res.json(areas);
+  } catch (err) {
+    console.error("Error fetching areas:", err);
+    res.status(500).json({ error: "Failed to fetch areas" });
+  }
+});
+
 // Catch-all route for React Router
 app.get("*", (req, res) => {
   const indexPath = path.join(__dirname, "..", "dist", "index.html");

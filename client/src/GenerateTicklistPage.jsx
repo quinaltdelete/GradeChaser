@@ -1,13 +1,236 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-function GenerateTicklistPage() {
-  const navigate = useNavigate();
+function GenerateTicklistPage({ user }) {
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState('');
+  const [filteredAreas, setFilteredAreas] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [ticklist, setTicklist] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Fetch areas for autocomplete
+  useEffect(() => {
+    fetch('/api/areas')
+      .then(res => res.json())
+      .then(data => setAreas(data))
+      .catch(err => console.error('Error fetching areas:', err));
+  }, []);
+
+  // Filter areas based on input
+  useEffect(() => {
+    if (selectedArea) {
+      const filtered = areas.filter(area =>
+        area.toLowerCase().includes(selectedArea.toLowerCase())
+      );
+      setFilteredAreas(filtered);
+    } else {
+      setFilteredAreas([]);
+    }
+  }, [selectedArea, areas]);
+
+  const handleAreaChange = (e) => {
+    setSelectedArea(e.target.value);
+    setShowSuggestions(true);
+    setError('');
+  };
+
+  const handleAreaSelect = (area) => {
+    setSelectedArea(area);
+    setShowSuggestions(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedArea.trim()) {
+      setError('Please select an area');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setTicklist(null);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/generate-ticklist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ area: selectedArea })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate ticklist');
+      }
+
+      setTicklist(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderRouteTable = (routes, title) => {
+    if (routes.length === 0) return null;
+
+    return (
+      <div style={{ marginBottom: '2em' }}>
+        <h3>{title}</h3>
+        <table className="ranking-table">
+          <thead>
+            <tr>
+              <th>Route Name</th>
+              <th>Zone</th>
+              <th>Country</th>
+              <th>Book Grade</th>
+              <th>Estimated Grade</th>
+            </tr>
+          </thead>
+          <tbody>
+            {routes.map((route) => (
+              <tr key={route.id}>
+                <td>
+                  <Link to={`/route/${route.id}`} style={{ textDecoration: 'none', color: 'blue' }}>
+                    {route.name}
+                  </Link>
+                </td>
+                <td>{route.sub_area}</td>
+                <td>{route.country}</td>
+                <td>{route.book_grade}</td>
+                <td>{route.estimated_v_grade}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   return (
     <div>
-      <p>...coming soon.</p>
-      <button onClick={() => navigate("/")}>Back</button>
+      <h2>Generate Ticklist</h2>
+      <p>Generate a personalized ticklist based on your climbing preferences and ranking history.</p>
+
+      <form onSubmit={handleSubmit} style={{ marginBottom: '2em' }}>
+        <div style={{ position: 'relative', marginBottom: '1em' }}>
+          <label htmlFor="area" style={{ display: 'block', marginBottom: '0.5em' }}>
+            Select Area:
+          </label>
+          <input
+            type="text"
+            id="area"
+            value={selectedArea}
+            onChange={handleAreaChange}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            placeholder="Start typing an area name..."
+            style={{
+              width: '100%',
+              maxWidth: '300px',
+              padding: '8px',
+              border: '1px solid #ccc',
+              borderRadius: '4px'
+            }}
+          />
+          {showSuggestions && filteredAreas.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: '0',
+              right: '0',
+              maxWidth: '300px',
+              backgroundColor: 'white',
+              border: '1px solid #ccc',
+              borderTop: 'none',
+              borderRadius: '0 0 4px 4px',
+              maxHeight: '200px',
+              overflowY: 'auto',
+              zIndex: 1000
+            }}>
+              {filteredAreas.slice(0, 10).map((area, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleAreaSelect(area)}
+                  style={{
+                    padding: '8px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #eee'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                >
+                  {area}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: loading ? '#ccc' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: loading ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {loading ? 'Generating...' : 'Generate Ticklist'}
+        </button>
+      </form>
+
+      {error && (
+        <div style={{
+          color: 'red',
+          backgroundColor: '#ffebee',
+          padding: '10px',
+          borderRadius: '4px',
+          marginBottom: '1em'
+        }}>
+          {error}
+        </div>
+      )}
+
+      {ticklist && (
+        <div>
+          <h3>Your Ticklist for {ticklist.area}</h3>
+          
+          <div style={{
+            backgroundColor: '#f5f5f5',
+            padding: '15px',
+            borderRadius: '4px',
+            marginBottom: '2em'
+          }}>
+            <h4>Your Climbing Profile</h4>
+            <p>Based on {ticklist.userStats.totalRanked} routes you've ranked:</p>
+            <ul>
+              <li>Projects level: {ticklist.userStats.topAverage} average score</li>
+              <li>Sessionable level: {ticklist.userStats.middleAverage} average score</li>
+              <li>Warmup level: {ticklist.userStats.bottomAverage} average score</li>
+            </ul>
+          </div>
+
+          {renderRouteTable(ticklist.ticklist.projects, 'Projects (Hard Routes)')}
+          {renderRouteTable(ticklist.ticklist.sessionable, 'Sessionable Climbs')}
+          {renderRouteTable(ticklist.ticklist.warmups, 'Warmups')}
+
+          {ticklist.ticklist.projects.length === 0 && 
+           ticklist.ticklist.sessionable.length === 0 && 
+           ticklist.ticklist.warmups.length === 0 && (
+            <p>No routes found in this area that you haven't already ranked.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
