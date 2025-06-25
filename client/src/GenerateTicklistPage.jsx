@@ -97,7 +97,7 @@ function GenerateTicklistPage({ user }) {
             {routes.map((route) => (
               <tr key={route.id}>
                 <td>
-                  <Link to={`/route/${route.id}`} style={{ textDecoration: 'none', color: 'blue' }}>
+                  <Link to={`/route/${route.id}`}>
                     {route.name}
                   </Link>
                 </td>
@@ -118,83 +118,75 @@ function GenerateTicklistPage({ user }) {
       <h2>Generate Ticklist</h2>
       <p>Generate a personalized ticklist based on your climbing preferences and ranking history.</p>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: '2em' }}>
-        <div style={{ position: 'relative', marginBottom: '1em' }}>
-          <label htmlFor="area" style={{ display: 'block', marginBottom: '0.5em' }}>
+      <div className="form-block">
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="area">
             Select Area:
-          </label>
-          <input
-            type="text"
-            id="area"
-            value={selectedArea}
-            onChange={handleAreaChange}
-            onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            placeholder="Start typing an area name..."
-            style={{
-              width: '100%',
-              maxWidth: '300px',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-          {showSuggestions && filteredAreas.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: '0',
-              right: '0',
-              maxWidth: '300px',
-              backgroundColor: 'white',
-              border: '1px solid #ccc',
-              borderTop: 'none',
-              borderRadius: '0 0 4px 4px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              zIndex: 1000
-            }}>
-              {filteredAreas.slice(0, 10).map((area, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleAreaSelect(area)}
-                  style={{
-                    padding: '8px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #eee'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
-                >
-                  {area}
-                </div>
-              ))}
+            <div style={{ position: 'relative' }}>
+              <input
+                type="text"
+                id="area"
+                value={selectedArea}
+                onChange={handleAreaChange}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                placeholder="Start typing an area name..."
+              />
+              {showSuggestions && filteredAreas.length > 0 && (
+                <ul className="suggestion-list" style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: '0',
+                  right: '0',
+                  backgroundColor: 'white',
+                  border: '1px solid #ccc',
+                  borderTop: 'none',
+                  borderRadius: '0 0 4px 4px',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                  zIndex: 1000,
+                  margin: 0,
+                  padding: '5px'
+                }}>
+                  {filteredAreas.slice(0, 10).map((area, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleAreaSelect(area)}
+                      style={{
+                        cursor: 'pointer',
+                        padding: '4px 8px',
+                        listStyle: 'none'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#eee'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                    >
+                      {area}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          )}
-        </div>
+          </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: loading ? '#ccc' : '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {loading ? 'Generating...' : 'Generate Ticklist'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              backgroundColor: loading ? '#444444' : '#000000',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? 'Generating...' : 'Generate Ticklist'}
+          </button>
+        </form>
+      </div>
 
       {error && (
-        <div style={{
-          color: 'red',
+        <div className="error-message" style={{
           backgroundColor: '#ffebee',
           padding: '10px',
           borderRadius: '4px',
+          marginTop: '1em',
           marginBottom: '1em'
         }}>
           {error}
@@ -206,10 +198,11 @@ function GenerateTicklistPage({ user }) {
           <h3>Your Ticklist for {ticklist.area}</h3>
           
           <div style={{
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#f4f4f4',
             padding: '15px',
             borderRadius: '4px',
-            marginBottom: '2em'
+            marginBottom: '2em',
+            border: '1px solid #dcdcdc'
           }}>
             <h4>Your Climbing Profile</h4>
             <p>Based on {ticklist.userStats.totalRanked} routes you've ranked:</p>
