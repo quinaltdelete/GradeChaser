@@ -118,7 +118,7 @@ function GenerateTicklistPage({ user }) {
       <h2>Generate Ticklist</h2>
       <p>Generate a personalized ticklist based on your climbing preferences and ranking history.</p>
 
-      <div className="form-block">
+      <div className="form-block" style={{ marginLeft: '0' }}>
         <form onSubmit={handleSubmit}>
           <label htmlFor="area">
             Select Area:
@@ -196,22 +196,7 @@ function GenerateTicklistPage({ user }) {
       {ticklist && (
         <div>
           <h3>Your Ticklist for {ticklist.area}</h3>
-          
-          <div style={{
-            backgroundColor: '#f4f4f4',
-            padding: '15px',
-            borderRadius: '4px',
-            marginBottom: '2em',
-            border: '1px solid #dcdcdc'
-          }}>
-            <h4>Your Climbing Profile</h4>
-            <p>Based on {ticklist.userStats.totalRanked} routes you've ranked:</p>
-            <ul>
-              <li>Projects level: {ticklist.userStats.topAverage} average score</li>
-              <li>Sessionable level: {ticklist.userStats.middleAverage} average score</li>
-              <li>Warmup level: {ticklist.userStats.bottomAverage} average score</li>
-            </ul>
-          </div>
+          <p>Based on {ticklist.userStats.totalRanked} routes you've ranked so far.</p>
 
           {renderRouteTable(ticklist.ticklist.projects, 'Projects (Hard Routes)')}
           {renderRouteTable(ticklist.ticklist.sessionable, 'Sessionable Climbs')}
