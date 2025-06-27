@@ -14,7 +14,7 @@ const pool = new Pool({
 
 async function main() {
   try {
-    const filePath = path.join(__dirname, 'climbsData/cleanedData/cleaned-squamish-climbs.json');
+    const filePath = path.join(__dirname, 'climbsData/cleanedData/cleaned-rocklands-climbs.json');
 
 if (!fs.existsSync(filePath)) {
   console.error(`File not found: ${filePath}`);
@@ -26,7 +26,7 @@ if (!fs.existsSync(filePath)) {
     for (const climb of climbs) {
       // Pull 'zone' and call it sub_area; pull 'vGrade' and call it book_grade
       const { name, area, zone: sub_area, vGrade: book_grade } = climb;
-      const country = "USA";
+      const country = "South Africa";
     
       await pool.query(
         `INSERT INTO routes (name, area, sub_area, country, book_grade)

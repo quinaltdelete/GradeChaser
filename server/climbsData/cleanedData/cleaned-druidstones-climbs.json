@@ -9,13 +9,13 @@
     "name": "Problem A",
     "area": "Bishop",
     "zone": "Druid Stones",
-    "vGrade": "V0-"
+    "vGrade": "V0"
   },
   {
     "name": "Galar",
     "area": "Bishop",
     "zone": "Druid Stones",
-    "vGrade": "V-easy"
+    "vGrade": "V0"
   },
   {
     "name": "Problem B",
@@ -27,7 +27,7 @@
     "name": "Problem C",
     "area": "Bishop",
     "zone": "Druid Stones",
-    "vGrade": "V-easy"
+    "vGrade": "V0"
   },
   {
     "name": "E3 5c",

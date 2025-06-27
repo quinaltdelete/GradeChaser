@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 // Define paths
-const rawDataPath = path.join(process.cwd(), 'server/climbsData/rawData/squamish-climbs.json');
-const outputFilePath = path.join(process.cwd(), 'server/climbsData/cleanedData/cleaned-squamish-area-names.json');
+const rawDataPath = path.join(process.cwd(), 'server/climbsData/rawData/rocklands-climbs-vscales.json');
+const outputFilePath = path.join(process.cwd(), 'server/climbsData/cleanedData/cleaned-rocklands-area-names.json');
 
 // Read and parse the JSON data
 const data = JSON.parse(fs.readFileSync(rawDataPath, 'utf-8'));
