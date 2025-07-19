@@ -278,7 +278,7 @@ function RankingDisplay({ routes, user }) {
       </table>
 
       <div style={{ marginTop: "4px", marginBottom: "12px", fontSize: "14px", color: "#666" }}>
-        out of {refinedRoutes.length} climbs
+        out of {routes.length} climbs
       </div>
 
       <div className="left-button-group">
